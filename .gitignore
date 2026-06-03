@@ -1,0 +1,27 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+npm-debug.log*
+
+# Local data and analysis assets not needed for the published Astro app
+01_datos/
+02_notebooks/
+03_scripts/
+04_informes/
+requirements.txt
+setup.sh
+DESIGN_SYSTEM.md
+
+# Python/local caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment and local editor files
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/

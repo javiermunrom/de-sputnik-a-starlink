@@ -1,0 +1,181 @@
+---
+import timeline from '../data/launch-timeline.json';
+
+const width = 2200;
+const height = 760;
+const padding = { top: 96, right: 96, bottom: 98, left: 96 };
+const plotWidth = width - padding.left - padding.right;
+const plotHeight = height - padding.top - padding.bottom;
+const series = timeline.series;
+const maxLaunches = Math.max(...series.map((item) => item.launches));
+const minYear = Math.min(...series.map((item) => item.year));
+const maxYear = Math.max(...series.map((item) => item.year));
+const x = (year: number) => padding.left + ((year - minYear) / (maxYear - minYear)) * plotWidth;
+const y = (value: number) => padding.top + plotHeight - (value / maxLaunches) * plotHeight;
+const barWidth = Math.max(4, plotWidth / series.length - 2);
+
+const rollingPath = series
+  .map((item, index) => `${index === 0 ? 'M' : 'L'} ${x(item.year).toFixed(2)} ${y(item.rolling5).toFixed(2)}`)
+  .join(' ');
+
+const annotations = [
+  { year: 1957, title: 'Sputnik', text: 'inaugura la era espacial', side: 'top' },
+  { year: 1969, title: 'Apollo 11', text: 'punto álgido de la carrera espacial', side: 'bottom' },
+  { year: 1991, title: 'Fin Guerra Fría', text: 'cambia el equilibrio espacial', side: 'top' },
+  { year: 2010, title: 'Comercialización', text: 'empieza una nueva fase', side: 'bottom' },
+  { year: 2020, title: 'Megaconstelaciones', text: 'se dispara el ritmo reciente', side: 'top', align: 'left' },
+];
+
+const eras = [
+  { start: 1957, end: 1969, label: 'Carrera espacial' },
+  { start: 1970, end: 1991, label: 'Guerra Fría madura' },
+  { start: 1992, end: 2009, label: 'Globalización' },
+  { start: 2010, end: 2019, label: 'Comercialización' },
+  { start: 2020, end: 2026, label: 'Nuevo ritmo orbital' },
+];
+---
+
+<figure class="chronology-figure reveal" aria-labelledby="chronology-title" aria-describedby="chronology-desc">
+  <div class="chronology-head">
+    <div>
+      <p class="eyebrow">Grafico principal</p>
+      <h3 id="chronology-title">Lanzamientos espaciales por año</h3>
+    </div>
+    <p id="chronology-desc">Barras anuales y media móvil de cinco años. La serie muestra aceleraciones, estancamientos y rupturas de ritmo desde 1957.</p>
+  </div>
+  <div class="chronology-canvas" role="img" aria-label="Cronologia de lanzamientos espaciales desde 1957 hasta 2026 con anotaciones historicas.">
+    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="barGradient" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#66e3ff" stop-opacity="0.92" />
+          <stop offset="100%" stop-color="#4aa3ff" stop-opacity="0.18" />
+        </linearGradient>
+        <linearGradient id="eraGradient" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stop-color="#66e3ff" stop-opacity="0.04" />
+          <stop offset="50%" stop-color="#ffb86b" stop-opacity="0.08" />
+          <stop offset="100%" stop-color="#c084fc" stop-opacity="0.07" />
+        </linearGradient>
+        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <rect x="0" y="0" width={width} height={height} rx="36" fill="rgba(5,8,22,0.76)" />
+      <g opacity="0.34">
+        {[0, 0.25, 0.5, 0.75, 1].map((tick) => (
+          <line x1={padding.left} x2={width - padding.right} y1={padding.top + plotHeight * tick} y2={padding.top + plotHeight * tick} stroke="rgba(174,187,208,0.18)" stroke-width="1" />
+        ))}
+      </g>
+
+      <g>
+        {eras.map((era) => (
+          <g>
+            <rect x={x(era.start)} y={padding.top} width={Math.max(1, x(era.end) - x(era.start))} height={plotHeight} fill="url(#eraGradient)" opacity="0.9" />
+            <text x={(x(era.start) + x(era.end)) / 2} y={padding.top - 28} text-anchor="middle" fill="#aebbd0" font-size="18" font-family="IBM Plex Mono" letter-spacing="1.8">{era.label}</text>
+          </g>
+        ))}
+      </g>
+
+      <g>
+        {series.map((item) => (
+          <rect
+            class="timeline-bar"
+            x={x(item.year) - barWidth / 2}
+            y={y(item.launches)}
+            width={barWidth}
+            height={padding.top + plotHeight - y(item.launches)}
+            rx="2"
+            fill="url(#barGradient)"
+            opacity={item.year >= 2020 ? '0.95' : '0.58'}
+            data-year={item.year}
+            data-launches={item.launches}
+            data-rolling={item.rolling5}
+            tabindex="0"
+          />
+        ))}
+      </g>
+
+      <path d={rollingPath} fill="none" stroke="#ffb86b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#softGlow)" />
+      <path d={rollingPath} fill="none" stroke="#fff3d8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+
+      <g>
+        {[1960, 1970, 1980, 1990, 2000, 2010, 2020].map((year) => (
+          <g>
+            <line x1={x(year)} x2={x(year)} y1={padding.top + plotHeight} y2={padding.top + plotHeight + 12} stroke="rgba(174,187,208,0.55)" />
+            <text x={x(year)} y={padding.top + plotHeight + 44} text-anchor="middle" fill="#aebbd0" font-size="18" font-family="IBM Plex Mono">{year}</text>
+          </g>
+        ))}
+      </g>
+
+      <g>
+        {annotations.map((annotation) => {
+          const anchorX = x(annotation.year);
+          const isTop = annotation.side === 'top';
+          const isLeft = annotation.align === 'left';
+          const textX = anchorX + (isLeft ? -18 : 14);
+          const textAnchor = isLeft ? 'end' : 'start';
+          const labelY = isTop ? padding.top + 68 : padding.top + plotHeight - 112;
+          const pointY = y(series.find((item) => item.year === annotation.year)?.launches ?? 0);
+          return (
+            <g>
+              <line x1={anchorX} x2={anchorX} y1={pointY - 8} y2={labelY + (isTop ? 18 : -26)} stroke="rgba(255,255,255,0.38)" stroke-dasharray="4 8" />
+              <circle cx={anchorX} cy={pointY} r="7" fill="#edf4ff" stroke="#66e3ff" stroke-width="3" />
+              <text x={textX} y={labelY} text-anchor={textAnchor} fill="#ffffff" font-size="22" font-weight="700" font-family="Space Grotesk">{annotation.year}</text>
+              <text x={textX} y={labelY + 28} text-anchor={textAnchor} fill="#66e3ff" font-size="18" font-weight="700" font-family="IBM Plex Mono">{annotation.title}</text>
+              <text x={textX} y={labelY + 55} text-anchor={textAnchor} fill="#aebbd0" font-size="18" font-family="Inter">{annotation.text}</text>
+            </g>
+          );
+        })}
+      </g>
+
+      <text x={padding.left} y={height - 26} fill="#72809a" font-size="16" font-family="Inter">Fuente: dataset final integrado. Conteo histórico preferente.</text>
+      <text x={width - padding.right} y={height - 26} text-anchor="end" fill="#72809a" font-size="16" font-family="Inter">Maximo anual: {timeline.summary.maxYear} · {timeline.summary.maxLaunches} lanzamientos</text>
+    </svg>
+    <div class="chronology-tooltip" role="status" aria-live="polite"></div>
+  </div>
+</figure>
+
+<script>
+  const canvases = document.querySelectorAll('.chronology-canvas');
+
+  canvases.forEach((canvas) => {
+    const tooltip = canvas.querySelector('.chronology-tooltip') as HTMLElement | null;
+    const bars = canvas.querySelectorAll<SVGRectElement>('.timeline-bar');
+    if (!tooltip) return;
+
+    const showTooltip = (bar: SVGRectElement, clientX?: number, clientY?: number) => {
+      const year = bar.dataset.year;
+      const launches = bar.dataset.launches;
+      const rolling = bar.dataset.rolling;
+      tooltip.innerHTML = `
+        <strong>${year}</strong>
+        <span>${launches} lanzamientos</span>
+        <small>Media móvil 5 años: ${rolling}</small>
+      `;
+      tooltip.classList.add('is-visible');
+
+      const canvasRect = canvas.getBoundingClientRect();
+      const barRect = bar.getBoundingClientRect();
+      const x = clientX ? clientX - canvasRect.left : barRect.left + barRect.width / 2 - canvasRect.left;
+      const y = clientY ? clientY - canvasRect.top : barRect.top - canvasRect.top;
+      tooltip.style.left = `${Math.min(Math.max(x, 120), canvasRect.width - 120)}px`;
+      tooltip.style.top = `${Math.max(y - 24, 24)}px`;
+    };
+
+    const hideTooltip = () => {
+      tooltip.classList.remove('is-visible');
+    };
+
+    bars.forEach((bar) => {
+      bar.addEventListener('pointerenter', (event) => showTooltip(bar, event.clientX, event.clientY));
+      bar.addEventListener('pointermove', (event) => showTooltip(bar, event.clientX, event.clientY));
+      bar.addEventListener('pointerleave', hideTooltip);
+      bar.addEventListener('focus', () => showTooltip(bar));
+      bar.addEventListener('blur', hideTooltip);
+    });
+  });
+</script>

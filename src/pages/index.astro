@@ -1,0 +1,119 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import HeroSection from '@components/HeroSection.astro';
+import ChronologyNarrative from '@components/ChronologyNarrative.astro';
+import ChapterTwoLeadership from '@components/ChapterTwoLeadership.astro';
+
+const dataMetrics = [
+  { value: '11.627', label: 'registros analizados', span: 'lg:col-span-4' },
+  { value: '1957–2026', label: 'cobertura temporal', span: 'lg:col-span-4' },
+  { value: '3', label: 'fuentes integradas', span: 'lg:col-span-2' },
+  { value: '7 décadas', label: 'de historia espacial', span: 'lg:col-span-2' },
+];
+---
+
+<BaseLayout
+  title="De Sputnik a Starlink"
+  description="Cómo el espacio dejó de ser una carrera entre superpotencias y se convirtió en una economía orbital."
+>
+  <div class="story-shell">
+    <HeroSection
+      title="De Sputnik a Starlink"
+      subtitle="Cómo el espacio dejó de ser una carrera entre superpotencias y se convirtió en una economía orbital."
+      intro="Una historia visual basada en datos sobre siete décadas de lanzamientos, actores, riesgos e infraestructuras alrededor de la Tierra."
+    />
+
+    <main id="contenido" tabindex="-1">
+      <section id="introduccion" class="intro-spread">
+        <div class="intro-copy reveal">
+          <p class="eyebrow mb-5">Prologo</p>
+          <h2>El espacio ya no es solo una frontera.</h2>
+          <div class="intro-text">
+            <p>Es una infraestructura de la que dependen comunicaciones, navegación, observación terrestre y buena parte de la economía global.</p>
+            <p>Para entender cómo hemos llegado hasta aquí analizamos más de siete décadas de actividad espacial.</p>
+          </div>
+        </div>
+        <figure class="apollo-panel reveal">
+          <img
+            src="https://images-assets.nasa.gov/image/as11-44-6551/as11-44-6551~orig.jpg"
+            alt="La Tierra vista desde la misión Apollo 11 sobre el horizonte lunar."
+            loading="eager"
+          />
+          <figcaption>
+            <span>Archivo NASA / Apollo 11</span>
+            La Tierra aparece como un objeto frágil visto desde otro mundo. Esta imagen sitúa la historia en su escala correcta: política, técnica y planetaria.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="datos" class="data-canvas py-[clamp(5rem,10vw,10rem)]">
+        <div class="editorial-spread relative z-[1]">
+          <div class="data-opening reveal">
+            <p class="eyebrow">Base empirica</p>
+              <h2>Los datos detrás de esta historia</h2>
+            <div>
+              <p>Esta historia no se basa en unos pocos hitos espaciales.</p>
+              <p>Se construye a partir de décadas de actividad orbital recopiladas en diferentes bases de datos internacionales.</p>
+              <p>Cada registro representa un lanzamiento, una misión, un satélite o una organización involucrada en la expansión de la actividad humana alrededor de la Tierra.</p>
+            </div>
+          </div>
+
+          <div class="metric-constellation reveal mt-16">
+            {dataMetrics.map((metric) => (
+              <div class:list={["metric-mark", metric.span]}>
+                <strong>{metric.value}</strong>
+                <span>{metric.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="source-strip reveal mt-16">
+            <div>
+              <strong>GCAT</strong>
+              <span>General Catalog of Artificial Space Objects</span>
+            </div>
+            <div>
+              <strong>UCS Satellite Database</strong>
+              <span>Órbitas, propósitos, operadores y satélites activos.</span>
+            </div>
+            <div>
+              <strong>Space_Missions_Cleaned</strong>
+              <span>Misiones, proveedores y estados de lanzamiento.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-threshold px-4 py-24 text-center">
+        <div class="reveal relative z-[1] mx-auto max-w-[96rem]">
+          <p class="eyebrow mb-6">La historia empieza</p>
+          <h2 class="font-display text-[clamp(3.5rem,8vw,10rem)] font-bold leading-[0.88] tracking-[-0.08em] text-white">Durante décadas el acceso al espacio estuvo reservado a un pequeño grupo de países.</h2>
+          <p class="mx-auto mt-8 max-w-[62rem] text-2xl leading-tight text-mist sm:text-4xl">Todo comenzó en 1957.</p>
+        </div>
+      </section>
+
+      <section id="carrera-espacial" class="chapter-one">
+        <div class="chapter-one-header reveal">
+          <div>
+            <p class="eyebrow">Capítulo 1</p>
+            <h2>Una historia de aceleraciones</h2>
+          </div>
+          <div class="chapter-one-intro-copy">
+            <p>La actividad espacial no creció de forma constante.</p>
+            <p>Durante casi siete décadas atravesó periodos de expansión, estancamiento y transformación.</p>
+            <p>Los lanzamientos reflejan mejor que ningún otro indicador cómo cambió el acceso al espacio.</p>
+          </div>
+        </div>
+
+        <ChronologyNarrative />
+
+        <div class="chapter-one-close reveal">
+          <p>La historia espacial no es una línea ascendente.</p>
+          <p>Es una sucesión de etapas que reflejan cambios tecnológicos, políticos y económicos.</p>
+        </div>
+      </section>
+
+      <ChapterTwoLeadership />
+    </main>
+  </div>
+</BaseLayout>

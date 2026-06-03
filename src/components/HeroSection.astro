@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  intro: string;
+}
+
+const { title, subtitle, intro } = Astro.props;
+---
+
+<section class="relative min-h-screen overflow-hidden px-4 py-8 sm:px-6" aria-labelledby="hero-title">
+  <div class="orbital-ring left-[58%] top-1/2 h-[46rem] w-[132rem] -translate-x-1/2 -translate-y-1/2 opacity-70" aria-hidden="true"></div>
+  <div class="orbital-ring left-[58%] top-1/2 h-[30rem] w-[88rem] -translate-x-1/2 -translate-y-1/2 opacity-40" aria-hidden="true"></div>
+  <div class="absolute left-[12%] top-[18%] h-2 w-2 rounded-full bg-aurora shadow-[0_0_26px_rgba(102,227,255,.9)]" aria-hidden="true"></div>
+  <div class="absolute bottom-[18%] right-[14%] h-24 w-24 rounded-full bg-lunar/10 blur-2xl" aria-hidden="true"></div>
+
+  <div class="wide-grid flex min-h-[calc(100vh-4rem)] items-center">
+    <div class="reveal grid w-full gap-10 pt-20 lg:grid-cols-[1.35fr_0.65fr] lg:items-end">
+      <div>
+        <p class="eyebrow mb-6">Reportaje interactivo / Actividad espacial 1957–2026</p>
+        <h1 id="hero-title" class="font-display text-[clamp(4.6rem,12vw,13.5rem)] font-bold leading-[0.84] tracking-[-0.085em] text-white">
+          {title}
+        </h1>
+      </div>
+      <div class="max-w-[48rem] border-l border-white/15 pl-6 lg:mb-7">
+        <p class="text-[clamp(1.8rem,3vw,4rem)] leading-[1.02] tracking-[-0.055em] text-lunar/95">
+          {subtitle}
+        </p>
+        <p class="mt-8 text-lg leading-8 text-mist sm:text-xl">
+          {intro}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3" aria-label="Metadatos de la historia">
+          <span class="era-chip">Datos reales</span>
+          <span class="era-chip">5 capitulos</span>
+          <span class="era-chip">Scrollytelling</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="#contenido" class="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 text-xs font-bold uppercase tracking-[0.28em] text-mist transition hover:text-white focus:outline-none focus:ring-2 focus:ring-aurora focus:ring-offset-4 focus:ring-offset-void">
+    <span>Scroll</span>
+    <span class="h-12 w-px bg-gradient-to-b from-aurora to-transparent" aria-hidden="true"></span>
+  </a>
+</section>
