@@ -6,6 +6,7 @@ import ChapterTwoLeadership from '@components/ChapterTwoLeadership.astro';
 import ChapterThreeTransformation from '@components/ChapterThreeTransformation.astro';
 import ChapterFourReliability from '@components/ChapterFourReliability.astro';
 import ChapterFiveInfrastructure from '@components/ChapterFiveInfrastructure.astro';
+import FinalClosing from '@components/FinalClosing.astro';
 
 const dataMetrics = [
   { value: '11.627', label: 'registros analizados', span: 'lg:col-span-4' },
@@ -29,7 +30,7 @@ const dataMetrics = [
     <main id="contenido" tabindex="-1">
       <section id="introduccion" class="intro-spread">
         <div class="intro-copy reveal">
-          <p class="eyebrow mb-5">Prologo</p>
+          <p class="eyebrow mb-5">Prólogo</p>
           <h2>El espacio ya no es solo una frontera.</h2>
           <div class="intro-text">
             <p>Es una infraestructura de la que dependen comunicaciones, navegación, observación terrestre y buena parte de la economía global.</p>
@@ -120,6 +121,7 @@ const dataMetrics = [
       <ChapterThreeTransformation />
       <ChapterFourReliability />
       <ChapterFiveInfrastructure />
+      <FinalClosing />
     </main>
   </div>
 </BaseLayout>

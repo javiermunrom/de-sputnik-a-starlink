@@ -9,15 +9,15 @@ const formatNumber = (value: number) => value.toLocaleString('es-ES');
 <section id="transformacion-publico-privado" class="chapter-three" data-actor-chapter>
   <article class="actor-act actor-act--unknown" data-actor-act="unknown">
     <div class="actor-act-heading reveal">
-      <p class="eyebrow">Capitulo 3 / Acto 1</p>
+      <p class="eyebrow">Capítulo 3 / Acto 1</p>
       <h2>¿Sabemos realmente quién controla el espacio?</h2>
-      <p>No todos los registros espaciales permiten identificar claramente si el actor responsable era publico o privado.</p>
+      <p>No todos los registros espaciales permiten identificar claramente si el actor responsable era público o privado.</p>
     </div>
 
     <div class="unknown-stage">
       <div class="unknown-lede reveal">
         <strong>{formatPercent(summary.totalUnknownShare, 1)}</strong>
-        <span>de los registros quedan en una zona gris de clasificacion.</span>
+        <span>de los registros quedan en una zona gris de clasificación.</span>
       </div>
       <figure class="unknown-figure reveal">
         <svg class="unknown-chart" role="img" aria-label="Porcentaje anual de registros Unknown en el dataset espacial"></svg>
@@ -27,7 +27,7 @@ const formatNumber = (value: number) => value.toLocaleString('es-ES');
       <div class="unknown-period reveal">
         <span>1970-1991</span>
         <strong>{formatNumber(summary.unknown1970_1991Records)}</strong>
-        <p>registros sin clasificacion publico/privado en el periodo de Guerra Fria madura.</p>
+        <p>registros sin clasificación público/privado en el período de Guerra Fría madura.</p>
       </div>
     </div>
   </article>
@@ -39,13 +39,13 @@ const formatNumber = (value: number) => value.toLocaleString('es-ES');
   </article>
 
   <article class="actor-act actor-act--known-scroll" data-known-scroll>
-    <div class="known-scroll-steps" aria-label="Evolucion publico privado">
+    <div class="known-scroll-steps" aria-label="Evolución público-privado">
       <section class="known-step reveal" data-known-step="origin">
         <p class="eyebrow">Acto 3</p>
         <h2>El espacio era territorio público</h2>
         <div>
           <strong>≈100%</strong>
-          <span>publico en el inicio historico clasificado.</span>
+          <span>público en el inicio histórico clasificado.</span>
         </div>
       </section>
 
@@ -57,27 +57,27 @@ const formatNumber = (value: number) => value.toLocaleString('es-ES');
       <section class="known-step reveal" data-known-step="crossing">
         <p class="eyebrow">Acto 5</p>
         <h2>El cruce</h2>
-        <p>Por primera vez los actores privados superan a los publicos.</p>
+        <p>Por primera vez los actores privados superan a los públicos.</p>
       </section>
     </div>
 
     <div class="known-visual-column">
       <figure class="known-figure reveal">
-        <svg class="known-chart" role="img" aria-label="Area publico privado y slope con cruce historico"></svg>
-        <figcaption class="known-caption">Primero aparece solo el arranque publico.</figcaption>
+        <svg class="known-chart" role="img" aria-label="Área público-privado y slope con cruce histórico"></svg>
+        <figcaption class="known-caption">Primero aparece solo el arranque público.</figcaption>
       </figure>
     </div>
   </article>
 
   <article class="actor-act actor-act--conclusion reveal">
     <p class="eyebrow">Acto 6</p>
-    <div class="conclusion-numbers" aria-label="Balance actual publico privado en registros clasificados">
+    <div class="conclusion-numbers" aria-label="Balance actual público-privado en registros clasificados">
       <div>
         <span>Privado</span>
         <strong>{formatPercent(summary.latestPrivateShare, 1)}</strong>
       </div>
       <div>
-        <span>Publico</span>
+        <span>Público</span>
         <strong>{formatPercent(1 - summary.latestPrivateShare, 1)}</strong>
       </div>
     </div>
@@ -279,20 +279,20 @@ const formatNumber = (value: number) => value.toLocaleString('es-ES');
       annotation.append('text').attr('x', x(crossover.year) + 28).attr('y', y(0.5) - 24).attr('fill', '#ffeed8').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text('Cruce');
       annotation.append('text').attr('x', x(crossover.year) + 30).attr('y', y(0.5) + 10).attr('fill', '#ffb86b').attr('font-family', 'IBM Plex Mono').attr('font-size', 22).attr('font-weight', 700).text(summary.crossoverYear);
       slopeLayer.append('text').attr('x', width - margin.right).attr('y', y(latest.privateShare) - 22).attr('text-anchor', 'end').attr('fill', '#f0abfc').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text(`Privado ${formatPercent(latest.privateShare)}`);
-      slopeLayer.append('text').attr('x', width - margin.right).attr('y', y(latest.publicShare) + 42).attr('text-anchor', 'end').attr('fill', '#8fd3ff').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text(`Publico ${formatPercent(latest.publicShare)}`);
+      slopeLayer.append('text').attr('x', width - margin.right).attr('y', y(latest.publicShare) + 42).attr('text-anchor', 'end').attr('fill', '#8fd3ff').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text(`Público ${formatPercent(latest.publicShare)}`);
 
       [publicPath, privatePath].forEach((path) => {
         const length = path.node().getTotalLength();
         path.attr('stroke-dasharray', `${length} ${length}`).attr('stroke-dashoffset', length);
       });
 
-      svg.append('text').attr('x', margin.left).attr('y', margin.top - 32).attr('fill', '#8fd3ff').attr('font-family', 'Space Grotesk').attr('font-size', 28).attr('font-weight', 700).text('Publico');
+      svg.append('text').attr('x', margin.left).attr('y', margin.top - 32).attr('fill', '#8fd3ff').attr('font-family', 'Space Grotesk').attr('font-size', 28).attr('font-weight', 700).text('Público');
       svg.append('text').attr('x', width - margin.right).attr('y', margin.top - 32).attr('text-anchor', 'end').attr('fill', '#f0abfc').attr('font-family', 'Space Grotesk').attr('font-size', 28).attr('font-weight', 700).text('Privado');
 
       const captions = {
-        origin: 'Primero aparece solo el arranque publico.',
-        market: 'La serie avanza y el area privada deja de ser marginal.',
-        crossing: 'Las lineas aparecen encima: el cruce se convierte en el momento protagonista.',
+        origin: 'Primero aparece solo el arranque público.',
+        market: 'La serie avanza y el área privada deja de ser marginal.',
+        crossing: 'Las líneas aparecen encima: el cruce se convierte en el momento protagonista.',
       };
 
       const activate = (state) => {

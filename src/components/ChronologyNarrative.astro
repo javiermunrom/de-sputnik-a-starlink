@@ -38,12 +38,12 @@ const eras = [
 <figure class="chronology-figure reveal" aria-labelledby="chronology-title" aria-describedby="chronology-desc">
   <div class="chronology-head">
     <div>
-      <p class="eyebrow">Grafico principal</p>
+      <p class="eyebrow">Gráfico principal</p>
       <h3 id="chronology-title">Lanzamientos espaciales por año</h3>
     </div>
     <p id="chronology-desc">Barras anuales y media móvil de cinco años. La serie muestra aceleraciones, estancamientos y rupturas de ritmo desde 1957.</p>
   </div>
-  <div class="chronology-canvas" role="img" aria-label="Cronologia de lanzamientos espaciales desde 1957 hasta 2026 con anotaciones historicas.">
+  <div class="chronology-canvas" role="img" aria-label="Cronología de lanzamientos espaciales desde 1957 hasta 2026 con anotaciones históricas.">
     <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
       <defs>
         <linearGradient id="barGradient" x1="0" x2="0" y1="0" y2="1">
@@ -133,7 +133,7 @@ const eras = [
       </g>
 
       <text x={padding.left} y={height - 26} fill="#72809a" font-size="16" font-family="Inter">Fuente: dataset final integrado. Conteo histórico preferente.</text>
-      <text x={width - padding.right} y={height - 26} text-anchor="end" fill="#72809a" font-size="16" font-family="Inter">Maximo anual: {timeline.summary.maxYear} · {timeline.summary.maxLaunches} lanzamientos</text>
+      <text x={width - padding.right} y={height - 26} text-anchor="end" fill="#72809a" font-size="16" font-family="Inter">Máximo anual: {timeline.summary.maxYear} · {timeline.summary.maxLaunches} lanzamientos</text>
     </svg>
     <div class="chronology-tooltip" role="status" aria-live="polite"></div>
   </div>

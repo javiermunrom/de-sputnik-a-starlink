@@ -23,7 +23,9 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
-    <div class="noise-layer" aria-hidden="true"></div>
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="nebula" aria-hidden="true"></div>
+
     <slot />
     <script>
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
