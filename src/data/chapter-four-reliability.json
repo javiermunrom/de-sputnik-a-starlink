@@ -1,0 +1,76 @@
+{
+  "summary": {
+    "recordsWithReliability": 4324,
+    "recentWindow": "2011-2025",
+    "recentSuccessRate": 0.9345,
+    "note": "La fiabilidad se calcula sobre registros de lanzamiento con mission_success_binary disponible. El hito 2025 usa la ventana reciente 2011-2025 porque los estados de lanzamiento disponibles llegan hasta 2020."
+  },
+  "milestones": [
+    {
+      "id": "1957",
+      "label": "1957",
+      "window": "1957",
+      "message": "Lanzar al espacio era incierto.",
+      "total": 3,
+      "success": 2,
+      "failure": 1,
+      "successRate": 0.6667,
+      "cohesion": 0.18
+    },
+    {
+      "id": "1960",
+      "label": "1960",
+      "window": "1960",
+      "message": "El fallo seguía siendo parte del experimento.",
+      "total": 39,
+      "success": 19,
+      "failure": 20,
+      "successRate": 0.4872,
+      "cohesion": 0.24
+    },
+    {
+      "id": "1970",
+      "label": "1970",
+      "window": "1970",
+      "message": "La experiencia empieza a concentrar los resultados.",
+      "total": 107,
+      "success": 93,
+      "failure": 14,
+      "successRate": 0.8692,
+      "cohesion": 0.58
+    },
+    {
+      "id": "1990",
+      "label": "1990",
+      "window": "1990",
+      "message": "La fiabilidad se vuelve visible.",
+      "total": 80,
+      "success": 76,
+      "failure": 4,
+      "successRate": 0.95,
+      "cohesion": 0.78
+    },
+    {
+      "id": "2010",
+      "label": "2010",
+      "window": "2010",
+      "message": "Los fallos ya son interrupciones, no la norma.",
+      "total": 37,
+      "success": 34,
+      "failure": 3,
+      "successRate": 0.9189,
+      "cohesion": 0.84
+    },
+    {
+      "id": "2025",
+      "label": "2025",
+      "window": "2011-2025",
+      "message": "La operación espacial reciente se agrupa alrededor de la fiabilidad.",
+      "total": 702,
+      "success": 656,
+      "failure": 46,
+      "successRate": 0.9345,
+      "cohesion": 0.94
+    }
+  ]
+}

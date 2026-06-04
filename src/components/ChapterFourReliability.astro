@@ -1,0 +1,218 @@
+---
+import reliability from '../data/chapter-four-reliability.json';
+
+const milestones = reliability.milestones;
+const finalRate = reliability.summary.recentSuccessRate;
+const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
+---
+
+<section id="fiabilidad-espacial" class="chapter-four" data-reliability-chapter>
+  <div class="reliability-opening reveal">
+    <p class="eyebrow">Capitulo 4 / Fiabilidad</p>
+    <h2>La Luna deja de ser un blanco incierto.</h2>
+    <p>Éxitos y fallos orbitan una misma escena. Cuanto más fiable se vuelve una época, más cerca queda su actividad del centro.</p>
+  </div>
+
+  <div class="moon-scroll" data-moon-scroll>
+    <div class="moon-steps" aria-label="Etapas de fiabilidad espacial">
+      {milestones.map((milestone) => (
+        <article class="moon-step reveal" data-moon-step={milestone.id}>
+          <span>{milestone.label}</span>
+          <h3>{milestone.message}</h3>
+          <p>{milestone.window === milestone.label ? 'Registros de ese año.' : `Ventana de datos: ${milestone.window}.`}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="moon-visual-column">
+      <figure class="moon-figure reveal">
+        <svg class="moon-reliability-visual" role="img" aria-label="Lanzamientos como puntos que se concentran alrededor de la Luna al aumentar la fiabilidad"></svg>
+        <figcaption class="moon-caption">La distancia al centro representa fiabilidad colectiva. Azul: éxitos. Rojo: fallos.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="moon-conclusion reveal">
+    <p class="eyebrow">Conclusión</p>
+    <strong>{formatPercent(finalRate)}</strong>
+    <p>de los lanzamientos recientes alcanzan con éxito su objetivo.</p>
+    <h3>En menos de siete décadas la actividad espacial pasó de ser una actividad experimental de alto riesgo a convertirse en una infraestructura global altamente fiable.</h3>
+  </div>
+</section>
+
+<script>
+  import * as d3 from 'd3';
+  import reliability from '../data/chapter-four-reliability.json';
+
+  const chapter = document.querySelector('[data-reliability-chapter]');
+
+  if (chapter) {
+    const milestones = reliability.milestones;
+    const milestoneById = new Map(milestones.map((milestone) => [milestone.id, milestone]));
+    const svg = d3.select(chapter.querySelector('.moon-reliability-visual'));
+    const caption = chapter.querySelector('.moon-caption');
+    const width = 1280;
+    const height = 860;
+    const center = { x: width * 0.58, y: height * 0.5 };
+    const moonRadius = 118;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = prefersReduced ? 0 : 1450;
+    const pointCount = 240;
+    const colors = { success: '#8fd3ff', failure: '#ff5b6e' };
+    let activeId = milestones[0].id;
+    let finalOrbitDrawn = false;
+
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('preserveAspectRatio', 'xMidYMid meet');
+
+    const seeded = (index, salt = 0) => {
+      const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+      return x - Math.floor(x);
+    };
+
+    const points = d3.range(pointCount).map((index) => ({
+      id: index,
+      angle: seeded(index, 1) * Math.PI * 2,
+      jitter: seeded(index, 2),
+      drift: seeded(index, 3),
+      orbit: seeded(index, 4),
+    }));
+
+    const defs = svg.append('defs');
+    const moonGradient = defs.append('radialGradient').attr('id', 'moon-gradient').attr('cx', '38%').attr('cy', '32%');
+    moonGradient.append('stop').attr('offset', '0%').attr('stop-color', '#ffffff');
+    moonGradient.append('stop').attr('offset', '54%').attr('stop-color', '#cfd8e6');
+    moonGradient.append('stop').attr('offset', '100%').attr('stop-color', '#76859c');
+
+    const glow = defs.append('filter').attr('id', 'moon-glow').attr('x', '-80%').attr('y', '-80%').attr('width', '260%').attr('height', '260%');
+    glow.append('feGaussianBlur').attr('stdDeviation', 16).attr('result', 'blur');
+    const merge = glow.append('feMerge');
+    merge.append('feMergeNode').attr('in', 'blur');
+    merge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+    svg.append('rect').attr('width', width).attr('height', height).attr('fill', 'transparent');
+    const orbitLayer = svg.append('g').attr('class', 'moon-orbits');
+    [190, 285, 390].forEach((radius, index) => {
+      orbitLayer.append('ellipse')
+        .attr('cx', center.x)
+        .attr('cy', center.y)
+        .attr('rx', radius)
+        .attr('ry', radius * (0.62 + index * 0.04))
+        .attr('fill', 'none')
+        .attr('stroke', 'rgba(237,244,255,0.10)')
+        .attr('stroke-width', 1.2)
+        .attr('transform', `rotate(${-16 + index * 9} ${center.x} ${center.y})`);
+    });
+
+    const pointLayer = svg.append('g').attr('class', 'moon-points');
+    const pointSelection = pointLayer.selectAll('circle').data(points, (d) => d.id).join('circle')
+      .attr('cx', () => center.x)
+      .attr('cy', () => center.y)
+      .attr('r', 0)
+      .attr('fill', colors.success)
+      .attr('opacity', 0.76);
+
+    const moon = svg.append('g').attr('class', 'moon-core');
+    moon.append('circle').attr('cx', center.x).attr('cy', center.y).attr('r', moonRadius + 28).attr('fill', 'rgba(237,244,255,0.08)').attr('filter', 'url(#moon-glow)');
+    moon.append('circle').attr('cx', center.x).attr('cy', center.y).attr('r', moonRadius).attr('fill', 'url(#moon-gradient)').attr('filter', 'url(#moon-glow)');
+    [
+      { x: -38, y: -34, r: 16, o: 0.18 },
+      { x: 42, y: -10, r: 23, o: 0.12 },
+      { x: -4, y: 42, r: 28, o: 0.10 },
+      { x: 48, y: 52, r: 10, o: 0.14 },
+      { x: -62, y: 28, r: 12, o: 0.16 }
+    ].forEach((crater) => {
+      moon.append('circle').attr('cx', center.x + crater.x).attr('cy', center.y + crater.y).attr('r', crater.r).attr('fill', `rgba(34,45,62,${crater.o})`);
+    });
+    moon.append('circle').attr('cx', center.x - 32).attr('cy', center.y - 40).attr('r', moonRadius * 0.9).attr('fill', 'rgba(255,255,255,0.09)');
+
+    const label = svg.append('g').attr('class', 'moon-readout').attr('transform', `translate(${center.x - 510},${center.y - 282})`);
+    label.append('text').attr('class', 'moon-readout-year').attr('fill', '#ffffff').attr('font-family', 'Space Grotesk').attr('font-size', 92).attr('font-weight', 700).attr('letter-spacing', '-7');
+    label.append('text').attr('class', 'moon-readout-message').attr('y', 48).attr('fill', '#aebbd0').attr('font-family', 'Inter').attr('font-size', 22);
+
+    const finalOrbit = svg.append('g').attr('class', 'moon-final-orbit').attr('opacity', 0);
+    finalOrbit.append('ellipse').attr('cx', center.x).attr('cy', center.y).attr('rx', moonRadius + 66).attr('ry', moonRadius + 24).attr('fill', 'none').attr('stroke', 'rgba(102,227,255,0.72)').attr('stroke-width', 3).attr('transform', `rotate(-18 ${center.x} ${center.y})`);
+    finalOrbit.append('text').attr('x', center.x).attr('y', center.y + moonRadius + 108).attr('text-anchor', 'middle').attr('fill', '#edf4ff').attr('font-family', 'Space Grotesk').attr('font-size', 30).attr('font-weight', 700).text('operación fiable');
+
+    const positionFor = (point, milestone) => {
+      const failureShare = 1 - milestone.successRate;
+      const isFailure = point.id < Math.round(pointCount * failureShare);
+      const organic = Math.sin(point.id * 0.77 + milestone.cohesion * 4.1) * 20;
+      const spread = 470 - milestone.cohesion * 320;
+      const successRadius = moonRadius + 42 + (1 - milestone.cohesion) * 260 + point.jitter * spread * 0.45 + organic;
+      const failureRadius = moonRadius + 210 + point.jitter * (300 - milestone.cohesion * 110) + organic * 1.8;
+      const finalOrbitRadius = moonRadius + 66 + (point.jitter - 0.5) * 16;
+      const radius = milestone.id === '2025' && !isFailure
+        ? finalOrbitRadius
+        : isFailure
+          ? failureRadius
+          : successRadius;
+      const angle = point.angle + milestone.cohesion * 1.6 + point.drift * 0.5;
+      const flatten = 0.72 + milestone.cohesion * 0.08;
+      return {
+        x: center.x + Math.cos(angle) * radius,
+        y: center.y + Math.sin(angle) * radius * flatten,
+        type: isFailure ? 'failure' : 'success',
+        radius: isFailure ? 4.8 : milestone.id === '2025' ? 4.2 : 3.9 + milestone.cohesion * 1.2,
+        opacity: isFailure ? 0.88 : 0.48 + milestone.cohesion * 0.35,
+      };
+    };
+
+    const update = (milestone) => {
+      const positions = points.map((point) => ({ ...point, ...positionFor(point, milestone) }));
+      const t = pointSelection.data(positions, (d) => d.id).transition().duration(duration).ease(d3.easeCubicInOut);
+
+      t.attr('cx', (d) => d.x)
+        .attr('cy', (d) => d.y)
+        .attr('r', (d) => d.radius)
+        .attr('fill', (d) => colors[d.type])
+        .attr('opacity', (d) => d.opacity);
+
+      svg.select('.moon-readout-year').text(milestone.label);
+      svg.select('.moon-readout-message').text(milestone.message);
+      caption.textContent = milestone.id === '2025'
+        ? 'Los puntos se reorganizan en una órbita estable alrededor de la Luna: el riesgo no desaparece, pero deja de dominar la escena.'
+        : 'Cuanto más cerca quedan los puntos del centro, más rutinaria se vuelve la operación espacial.';
+
+      finalOrbit.transition().duration(duration).ease(d3.easeCubicInOut).attr('opacity', milestone.id === '2025' ? 1 : 0);
+      finalOrbitDrawn = milestone.id === '2025';
+    };
+
+    const steps = Array.from(chapter.querySelectorAll('[data-moon-step]'));
+    let ticking = false;
+    const updateActiveStep = () => {
+      const targetY = window.innerHeight * 0.54;
+      let closest = null;
+      let closestDistance = Number.POSITIVE_INFINITY;
+      steps.forEach((step) => {
+        const rect = step.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        const distance = Math.abs(rect.top + rect.height * 0.5 - targetY);
+        if (distance < closestDistance) {
+          closest = step;
+          closestDistance = distance;
+        }
+      });
+
+      const id = closest?.getAttribute('data-moon-step');
+      if (!id || id === activeId) return;
+      activeId = id;
+      steps.forEach((step) => step.classList.toggle('is-active', step === closest));
+      update(milestoneById.get(id) || milestones[0]);
+    };
+
+    const requestUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        updateActiveStep();
+      });
+    };
+
+    steps[0]?.classList.add('is-active');
+    update(milestones[0]);
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    updateActiveStep();
+  }
+</script>

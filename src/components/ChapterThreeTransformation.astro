@@ -1,0 +1,354 @@
+---
+import actorBalance from '../data/chapter-three-actors.json';
+
+const summary = actorBalance.summary;
+const formatPercent = (value: number, digits = 0) => `${(value * 100).toLocaleString('es-ES', { maximumFractionDigits: digits })}%`;
+const formatNumber = (value: number) => value.toLocaleString('es-ES');
+---
+
+<section id="transformacion-publico-privado" class="chapter-three" data-actor-chapter>
+  <article class="actor-act actor-act--unknown" data-actor-act="unknown">
+    <div class="actor-act-heading reveal">
+      <p class="eyebrow">Capitulo 3 / Acto 1</p>
+      <h2>¿Sabemos realmente quién controla el espacio?</h2>
+      <p>No todos los registros espaciales permiten identificar claramente si el actor responsable era publico o privado.</p>
+    </div>
+
+    <div class="unknown-stage">
+      <div class="unknown-lede reveal">
+        <strong>{formatPercent(summary.totalUnknownShare, 1)}</strong>
+        <span>de los registros quedan en una zona gris de clasificacion.</span>
+      </div>
+      <figure class="unknown-figure reveal">
+        <svg class="unknown-chart" role="img" aria-label="Porcentaje anual de registros Unknown en el dataset espacial"></svg>
+        <div class="unknown-tooltip" role="status" aria-live="polite"></div>
+        <figcaption>Unknown no se oculta: delimita lo que los datos no permiten afirmar. El eje Y muestra porcentaje sobre el total anual.</figcaption>
+      </figure>
+      <div class="unknown-period reveal">
+        <span>1970-1991</span>
+        <strong>{formatNumber(summary.unknown1970_1991Records)}</strong>
+        <p>registros sin clasificacion publico/privado en el periodo de Guerra Fria madura.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="actor-act actor-act--bridge reveal">
+    <p class="eyebrow">Acto 2</p>
+    <h2>Lo que sí sabemos.</h2>
+    <p>Aunque existe una zona de incertidumbre, miles de registros sí permiten identificar la naturaleza de los actores espaciales.</p>
+  </article>
+
+  <article class="actor-act actor-act--known-scroll" data-known-scroll>
+    <div class="known-scroll-steps" aria-label="Evolucion publico privado">
+      <section class="known-step reveal" data-known-step="origin">
+        <p class="eyebrow">Acto 3</p>
+        <h2>El espacio era territorio público</h2>
+        <div>
+          <strong>≈100%</strong>
+          <span>publico en el inicio historico clasificado.</span>
+        </div>
+      </section>
+
+      <section class="known-step reveal" data-known-step="market">
+        <p class="eyebrow">Acto 4</p>
+        <h2>Lo que comenzó como competición geopolítica empezó a transformarse en mercado.</h2>
+      </section>
+
+      <section class="known-step reveal" data-known-step="crossing">
+        <p class="eyebrow">Acto 5</p>
+        <h2>El cruce</h2>
+        <p>Por primera vez los actores privados superan a los publicos.</p>
+      </section>
+    </div>
+
+    <div class="known-visual-column">
+      <figure class="known-figure reveal">
+        <svg class="known-chart" role="img" aria-label="Area publico privado y slope con cruce historico"></svg>
+        <figcaption class="known-caption">Primero aparece solo el arranque publico.</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <article class="actor-act actor-act--conclusion reveal">
+    <p class="eyebrow">Acto 6</p>
+    <div class="conclusion-numbers" aria-label="Balance actual publico privado en registros clasificados">
+      <div>
+        <span>Privado</span>
+        <strong>{formatPercent(summary.latestPrivateShare, 1)}</strong>
+      </div>
+      <div>
+        <span>Publico</span>
+        <strong>{formatPercent(1 - summary.latestPrivateShare, 1)}</strong>
+      </div>
+    </div>
+    <p>El espacio sigue siendo estratégico. Pero ya no pertenece únicamente a los Estados.</p>
+  </article>
+</section>
+
+<script>
+  import * as d3 from 'd3';
+  import actorBalance from '../data/chapter-three-actors.json';
+
+  const chapter = document.querySelector('[data-actor-chapter]');
+
+  if (chapter) {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = prefersReduced ? 0 : 1400;
+    const fields = actorBalance.fields;
+    const series = actorBalance.series.map((row) => Object.fromEntries(fields.map((field, index) => [field, row[index]])));
+    const summary = actorBalance.summary;
+    const formatPercent = d3.format('.0%');
+    const formatPrecisePercent = d3.format('.1%');
+    const width = 1440;
+    const chartHeight = 620;
+    const tallHeight = 760;
+    const margin = { top: 76, right: 96, bottom: 82, left: 108 };
+
+    const observeOnce = (element, callback) => {
+      if (!element) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          callback();
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.34, rootMargin: '0px 0px -12% 0px' });
+      observer.observe(element);
+    };
+
+    const addYearAxis = (svg, x, y, height) => {
+      [1960, 1980, 2000, 2020].forEach((year) => {
+        svg.append('line')
+          .attr('x1', x(year))
+          .attr('x2', x(year))
+          .attr('y1', y(0))
+          .attr('y2', y(0) + 10)
+          .attr('stroke', 'rgba(174,187,208,0.55)');
+        svg.append('text')
+          .attr('x', x(year))
+          .attr('y', height - 28)
+          .attr('text-anchor', 'middle')
+          .attr('fill', 'rgba(174,187,208,0.78)')
+          .attr('font-family', 'IBM Plex Mono')
+          .attr('font-size', 17)
+          .text(year);
+      });
+    };
+
+    const addGrid = (svg, y, ticks = [0, 0.25, 0.5, 0.75, 1]) => {
+      ticks.forEach((tick) => {
+        svg.append('line')
+          .attr('x1', margin.left)
+          .attr('x2', width - margin.right)
+          .attr('y1', y(tick))
+          .attr('y2', y(tick))
+          .attr('stroke', 'rgba(237,244,255,0.11)')
+          .attr('stroke-width', 1);
+        svg.append('text')
+          .attr('x', margin.left - 18)
+          .attr('y', y(tick) + 6)
+          .attr('text-anchor', 'end')
+          .attr('fill', 'rgba(174,187,208,0.72)')
+          .attr('font-family', 'IBM Plex Mono')
+          .attr('font-size', 16)
+          .text(formatPercent(tick));
+      });
+    };
+
+    const buildUnknown = () => {
+      const element = chapter.querySelector('.unknown-chart');
+      const figure = chapter.querySelector('.unknown-figure');
+      const tooltip = chapter.querySelector('.unknown-tooltip');
+      const svg = d3.select(element).attr('viewBox', `0 0 ${width} ${chartHeight}`).attr('preserveAspectRatio', 'xMidYMid meet');
+      const x = d3.scaleLinear().domain(d3.extent(series, (d) => d.year)).range([margin.left, width - margin.right]);
+      const y = d3.scaleLinear().domain([0, 0.9]).range([chartHeight - margin.bottom, margin.top]);
+      const barWidth = Math.max(5, (width - margin.left - margin.right) / series.length - 6);
+      const clipId = 'unknown-reveal-clip';
+      const maxItem = series.reduce((max, item) => item.unknownShare > max.unknownShare ? item : max, series[0]);
+      const minItem = series.reduce((min, item) => item.unknownShare < min.unknownShare ? item : min, series[0]);
+
+      svg.append('defs').append('clipPath').attr('id', clipId).append('rect').attr('x', margin.left).attr('y', 0).attr('width', 0).attr('height', chartHeight);
+      addGrid(svg, y, [0, 0.25, 0.5, 0.75]);
+      addYearAxis(svg, x, y, chartHeight);
+      svg.append('text').attr('x', margin.left - 18).attr('y', margin.top - 28).attr('text-anchor', 'end').attr('fill', '#aebbd0').attr('font-family', 'IBM Plex Mono').attr('font-size', 15).text('Eje Y');
+      svg.append('text').attr('x', margin.left - 18).attr('y', margin.top - 8).attr('text-anchor', 'end').attr('fill', '#edf4ff').attr('font-family', 'IBM Plex Mono').attr('font-size', 16).attr('font-weight', 700).text('% Unknown');
+
+      const layer = svg.append('g').attr('clip-path', `url(#${clipId})`);
+      const bars = layer.selectAll('rect').data(series).join('rect')
+        .attr('class', 'unknown-bar')
+        .attr('x', (d) => x(d.year) - barWidth / 2)
+        .attr('y', (d) => y(d.unknownShare))
+        .attr('width', barWidth)
+        .attr('height', (d) => y(0) - y(d.unknownShare))
+        .attr('rx', 4)
+        .attr('fill', (d) => d.year >= 1970 && d.year <= 1991 ? 'rgba(237,244,255,0.72)' : 'rgba(174,187,208,0.28)');
+
+      const line = d3.line().x((d) => x(d.year)).y((d) => y(d.unknownShare)).curve(d3.curveCatmullRom.alpha(0.35));
+      layer.append('path')
+        .datum(series)
+        .attr('d', line)
+        .attr('fill', 'none')
+        .attr('stroke', '#edf4ff')
+        .attr('stroke-width', 4)
+        .attr('stroke-dasharray', '1 11')
+        .attr('stroke-linecap', 'round');
+
+      const extrema = svg.append('g').attr('opacity', 0);
+      const addExtreme = (item, label, anchor = 'start') => {
+        const textAnchor = anchor;
+        const offset = anchor === 'end' ? -18 : 18;
+        extrema.append('circle').attr('cx', x(item.year)).attr('cy', y(item.unknownShare)).attr('r', 9).attr('fill', '#edf4ff').attr('stroke', label === 'Mayor' ? '#ffb86b' : '#66e3ff').attr('stroke-width', 5);
+        extrema.append('text').attr('x', x(item.year) + offset).attr('y', y(item.unknownShare) - 18).attr('text-anchor', textAnchor).attr('fill', '#ffffff').attr('font-family', 'Space Grotesk').attr('font-size', 25).attr('font-weight', 700).text(`${label}: ${formatPercent(item.unknownShare)}`);
+        extrema.append('text').attr('x', x(item.year) + offset).attr('y', y(item.unknownShare) + 12).attr('text-anchor', textAnchor).attr('fill', '#aebbd0').attr('font-family', 'IBM Plex Mono').attr('font-size', 17).text(item.year);
+      };
+      addExtreme(maxItem, 'Mayor');
+      addExtreme(minItem, 'Menor', 'end');
+
+      svg.append('text').attr('x', margin.left).attr('y', margin.top - 30).attr('fill', '#edf4ff').attr('font-family', 'Space Grotesk').attr('font-size', 28).attr('font-weight', 700).text('Registros Unknown por año');
+      svg.append('text').attr('x', width - margin.right).attr('y', margin.top - 30).attr('text-anchor', 'end').attr('fill', '#aebbd0').attr('font-family', 'IBM Plex Mono').attr('font-size', 18).text('porcentaje sobre total anual');
+
+      const showTooltip = (event, item) => {
+        if (!tooltip || !figure) return;
+        tooltip.innerHTML = `<strong>${item.year}</strong><span>${formatPrecisePercent(item.unknownShare)} Unknown</span><small>${item.unknown.toLocaleString('es-ES')} de ${item.total.toLocaleString('es-ES')} registros</small>`;
+        tooltip.classList.add('is-visible');
+        const rect = figure.getBoundingClientRect();
+        tooltip.style.left = `${Math.min(Math.max(event.clientX - rect.left, 120), rect.width - 120)}px`;
+        tooltip.style.top = `${Math.max(event.clientY - rect.top - 26, 20)}px`;
+      };
+      const hideTooltip = () => tooltip?.classList.remove('is-visible');
+
+      bars.on('pointerenter', function(event, item) {
+        d3.select(this).attr('fill', '#edf4ff');
+        showTooltip(event, item);
+      }).on('pointermove', showTooltip)
+        .on('pointerleave', function(event, item) {
+          d3.select(this).attr('fill', item.year >= 1970 && item.year <= 1991 ? 'rgba(237,244,255,0.72)' : 'rgba(174,187,208,0.28)');
+          hideTooltip();
+        });
+
+      observeOnce(element, () => {
+        svg.select(`#${clipId} rect`).transition().duration(duration).ease(d3.easeCubicInOut).attr('width', width - margin.left - margin.right);
+        extrema.transition().delay(duration * 0.55).duration(650).ease(d3.easeCubicOut).attr('opacity', 1);
+      });
+    };
+
+    const buildKnownScroll = () => {
+      const scene = chapter.querySelector('[data-known-scroll]');
+      const element = chapter.querySelector('.known-chart');
+      const caption = chapter.querySelector('.known-caption');
+      const svg = d3.select(element).attr('viewBox', `0 0 ${width} ${tallHeight}`).attr('preserveAspectRatio', 'xMidYMid meet');
+      const x = d3.scaleLinear().domain(d3.extent(series, (d) => d.year)).range([margin.left, width - margin.right]);
+      const y = d3.scaleLinear().domain([0, 1]).range([tallHeight - margin.bottom, margin.top]);
+      const defs = svg.append('defs');
+      const areaClipId = 'known-area-clip';
+      const publicData = series.map((d) => ({ year: d.year, value: d.publicShare }));
+      const privateData = series.map((d) => ({ year: d.year, value: d.privateShare }));
+      const crossover = series.find((d) => d.year === summary.crossoverYear);
+      const latest = series.at(-1);
+      let slopeDrawn = false;
+
+      defs.append('clipPath').attr('id', areaClipId).append('rect').attr('x', margin.left).attr('y', 0).attr('width', 0).attr('height', tallHeight);
+      defs.append('linearGradient').attr('id', 'known-public-gradient').attr('x1', '0').attr('x2', '0').attr('y1', '0').attr('y2', '1')
+        .call((gradient) => {
+          gradient.append('stop').attr('offset', '0%').attr('stop-color', '#8fd3ff').attr('stop-opacity', 0.96);
+          gradient.append('stop').attr('offset', '100%').attr('stop-color', '#2563eb').attr('stop-opacity', 0.5);
+        });
+      defs.append('linearGradient').attr('id', 'known-private-gradient').attr('x1', '0').attr('x2', '0').attr('y1', '0').attr('y2', '1')
+        .call((gradient) => {
+          gradient.append('stop').attr('offset', '0%').attr('stop-color', '#f0abfc').attr('stop-opacity', 0.92);
+          gradient.append('stop').attr('offset', '100%').attr('stop-color', '#9333ea').attr('stop-opacity', 0.52);
+        });
+
+      addGrid(svg, y);
+      addYearAxis(svg, x, y, tallHeight);
+
+      const areaLayer = svg.append('g').attr('clip-path', `url(#${areaClipId})`);
+      const publicArea = d3.area().x((d) => x(d.year)).y0(y(0)).y1((d) => y(d.publicShare)).curve(d3.curveLinear);
+      const privateArea = d3.area().x((d) => x(d.year)).y0((d) => y(d.publicShare)).y1(y(1)).curve(d3.curveLinear);
+      areaLayer.append('path').datum(series).attr('d', publicArea).attr('fill', 'url(#known-public-gradient)');
+      areaLayer.append('path').datum(series).attr('d', privateArea).attr('fill', 'url(#known-private-gradient)');
+      areaLayer.append('line').attr('x1', margin.left).attr('x2', width - margin.right).attr('y1', y(0.5)).attr('y2', y(0.5)).attr('stroke', 'rgba(255,255,255,0.2)').attr('stroke-dasharray', '7 12');
+
+      const slopeLayer = svg.append('g').attr('opacity', 0);
+      const line = d3.line().x((d) => x(d.year)).y((d) => y(d.value)).curve(d3.curveLinear);
+      const publicPath = slopeLayer.append('path').datum(publicData).attr('d', line).attr('fill', 'none').attr('stroke', '#60a5fa').attr('stroke-width', 9).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      const privatePath = slopeLayer.append('path').datum(privateData).attr('d', line).attr('fill', 'none').attr('stroke', '#c084fc').attr('stroke-width', 9).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      const annotation = slopeLayer.append('g').attr('opacity', 0);
+      annotation.append('line').attr('x1', x(crossover.year)).attr('x2', x(crossover.year)).attr('y1', margin.top + 18).attr('y2', tallHeight - margin.bottom).attr('stroke', 'rgba(255,184,107,0.78)').attr('stroke-width', 2).attr('stroke-dasharray', '8 12');
+      annotation.append('circle').attr('cx', x(crossover.year)).attr('cy', y(0.5)).attr('r', 17).attr('fill', '#050816').attr('stroke', '#ffb86b').attr('stroke-width', 6);
+      annotation.append('text').attr('x', x(crossover.year) + 28).attr('y', y(0.5) - 24).attr('fill', '#ffeed8').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text('Cruce');
+      annotation.append('text').attr('x', x(crossover.year) + 30).attr('y', y(0.5) + 10).attr('fill', '#ffb86b').attr('font-family', 'IBM Plex Mono').attr('font-size', 22).attr('font-weight', 700).text(summary.crossoverYear);
+      slopeLayer.append('text').attr('x', width - margin.right).attr('y', y(latest.privateShare) - 22).attr('text-anchor', 'end').attr('fill', '#f0abfc').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text(`Privado ${formatPercent(latest.privateShare)}`);
+      slopeLayer.append('text').attr('x', width - margin.right).attr('y', y(latest.publicShare) + 42).attr('text-anchor', 'end').attr('fill', '#8fd3ff').attr('font-family', 'Space Grotesk').attr('font-size', 34).attr('font-weight', 700).text(`Publico ${formatPercent(latest.publicShare)}`);
+
+      [publicPath, privatePath].forEach((path) => {
+        const length = path.node().getTotalLength();
+        path.attr('stroke-dasharray', `${length} ${length}`).attr('stroke-dashoffset', length);
+      });
+
+      svg.append('text').attr('x', margin.left).attr('y', margin.top - 32).attr('fill', '#8fd3ff').attr('font-family', 'Space Grotesk').attr('font-size', 28).attr('font-weight', 700).text('Publico');
+      svg.append('text').attr('x', width - margin.right).attr('y', margin.top - 32).attr('text-anchor', 'end').attr('fill', '#f0abfc').attr('font-family', 'Space Grotesk').attr('font-size', 28).attr('font-weight', 700).text('Privado');
+
+      const captions = {
+        origin: 'Primero aparece solo el arranque publico.',
+        market: 'La serie avanza y el area privada deja de ser marginal.',
+        crossing: 'Las lineas aparecen encima: el cruce se convierte en el momento protagonista.',
+      };
+
+      const activate = (state) => {
+        const revealYear = state === 'origin' ? 1969 : summary.endYear;
+        const areaOpacity = state === 'crossing' ? 0.28 : 1;
+        caption.textContent = captions[state] || captions.origin;
+        svg.select(`#${areaClipId} rect`).transition().duration(duration).ease(d3.easeCubicInOut).attr('width', x(revealYear) - margin.left);
+        areaLayer.transition().duration(duration).ease(d3.easeCubicInOut).attr('opacity', areaOpacity);
+        slopeLayer.transition().duration(duration).ease(d3.easeCubicInOut).attr('opacity', state === 'crossing' ? 1 : 0);
+        annotation.transition().duration(duration * 0.5).attr('opacity', state === 'crossing' ? 1 : 0);
+
+        if (state === 'crossing' && !slopeDrawn) {
+          slopeDrawn = true;
+          [publicPath, privatePath].forEach((path) => path.transition().duration(duration + 450).ease(d3.easeCubicInOut).attr('stroke-dashoffset', 0));
+        }
+      };
+
+      const steps = Array.from(chapter.querySelectorAll('[data-known-step]'));
+      let activeState = '';
+      let ticking = false;
+      const updateActive = () => {
+        const targetY = window.innerHeight * 0.52;
+        let closest = null;
+        let closestDistance = Number.POSITIVE_INFINITY;
+        steps.forEach((step) => {
+          const rect = step.getBoundingClientRect();
+          if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+          const distance = Math.abs(rect.top + rect.height * 0.5 - targetY);
+          if (distance < closestDistance) {
+            closest = step;
+            closestDistance = distance;
+          }
+        });
+        const state = closest?.getAttribute('data-known-step');
+        if (!state || state === activeState) return;
+        activeState = state;
+        steps.forEach((step) => step.classList.toggle('is-active', step === closest));
+        activate(state);
+      };
+      const requestUpdate = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          ticking = false;
+          updateActive();
+        });
+      };
+
+      observeOnce(element, () => activate('origin'));
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate);
+      steps[0]?.classList.add('is-active');
+      updateActive();
+    };
+
+    buildUnknown();
+    buildKnownScroll();
+  }
+</script>
