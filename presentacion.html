@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>De Sputnik a Starlink · Making Of</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f7f9;
+      --surface: #ffffff;
+      --border: #e6e6ec;
+      --text-primary: #1a1a2e;
+      --text-secondary: #6b6b80;
+      --text-muted: #9d9db0;
+      --accent: #2563eb;
+      --accent-amber: #d97706;
+      --accent-violet: #7c3aed;
+      --accent-green: #059669;
+      --accent-rose: #e11d48;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    #slides {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(2rem, 5vw, 6rem);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 500ms ease, visibility 500ms ease;
+      text-align: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .slide-inner {
+      max-width: 64rem;
+      width: 100%;
+    }
+
+    /* Typography */
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 6.5rem);
+      font-weight: 800;
+      letter-spacing: -.045em;
+      line-height: .92;
+      color: var(--text-primary);
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -.035em;
+      line-height: .95;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: clamp(1.2rem, 1.8vw, 2rem);
+      font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(.65rem, .75vw, .8rem);
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .subtitle {
+      font-size: clamp(1.1rem, 1.6vw, 1.75rem);
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--text-secondary);
+      margin-top: 1.2rem;
+      max-width: 48rem;
+      margin-inline: auto;
+    }
+
+    .body-text {
+      font-size: clamp(.95rem, 1.15vw, 1.2rem);
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-top: 1.5rem;
+      max-width: 48rem;
+      margin-inline: auto;
+    }
+
+    .body-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .meta-line {
+      font-size: clamp(.85rem, 1vw, 1.05rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .meta-line + .meta-line {
+      margin-top: .25rem;
+    }
+
+    /* Divider */
+    .divider {
+      width: 2.5rem;
+      height: 2px;
+      background: var(--border);
+      margin: 1.5rem auto;
+    }
+
+    /* Source cards */
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(.8rem, 1.5vw, 1.5rem);
+      margin-top: 2rem;
+    }
+
+    .source-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: clamp(1rem, 1.5vw, 1.5rem);
+      text-align: left;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .source-card .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: .2rem .5rem;
+      border-radius: .3rem;
+      background: var(--bg);
+      color: var(--text-muted);
+      margin-bottom: .6rem;
+    }
+
+    .source-card strong {
+      display: block;
+      font-size: clamp(1rem, 1.1vw, 1.2rem);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .source-card p {
+      margin-top: .35rem;
+      font-size: clamp(.8rem, .85vw, .9rem);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .source-card .stat {
+      margin-top: .7rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(.7rem, .75vw, .8rem);
+      font-weight: 500;
+    }
+
+    .source-card:nth-child(1) .stat { color: var(--accent); }
+    .source-card:nth-child(2) .stat { color: var(--accent-amber); }
+    .source-card:nth-child(3) .stat { color: var(--accent-green); }
+
+    /* Metrics */
+    .metrics {
+      display: flex;
+      justify-content: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric strong {
+      display: block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -.06em;
+      line-height: .88;
+      color: var(--text-primary);
+    }
+
+    .metric span {
+      display: block;
+      margin-top: .3rem;
+      font-size: clamp(.85rem, .9vw, 1rem);
+      color: var(--text-secondary);
+    }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: .4rem .8rem;
+      margin-top: 2rem;
+    }
+
+    .pipeline-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      padding: .5rem 1rem;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(.65rem, .75vw, .8rem);
+      font-weight: 500;
+      color: var(--text-secondary);
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+
+    .pipeline-arrow {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    /* Comparison */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: clamp(.8rem, 1.5vw, 1.5rem);
+      align-items: center;
+      margin-top: 2rem;
+    }
+
+    .comp-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: clamp(1.2rem, 1.8vw, 1.8rem);
+      text-align: left;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .comp-card .comp-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+      color: var(--text-muted);
+    }
+
+    .comp-card.highlight .comp-label {
+      color: var(--accent);
+    }
+
+    .comp-card.dim { opacity: .55; }
+
+    .comp-card h4 {
+      font-size: clamp(1rem, 1.15vw, 1.3rem);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .comp-card p {
+      margin-top: .4rem;
+      font-size: clamp(.8rem, .85vw, .9rem);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .comp-vs {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(.9rem, 1.2vw, 1.3rem);
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* Chapter road */
+    .chapter-road {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: clamp(.6rem, 1vw, 1.2rem);
+      margin-top: 2rem;
+    }
+
+    .chapter-node {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .75rem;
+      padding: clamp(.8rem, 1.2vw, 1.4rem);
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .chapter-node .num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(1.5rem, 2.2vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .chapter-node:nth-child(1) .num { color: var(--accent); }
+    .chapter-node:nth-child(2) .num { color: var(--accent-amber); }
+    .chapter-node:nth-child(3) .num { color: var(--accent-violet); }
+    .chapter-node:nth-child(4) .num { color: var(--accent-green); }
+    .chapter-node:nth-child(5) .num { color: var(--accent-rose); }
+
+    .chapter-node .label {
+      display: block;
+      margin-top: .3rem;
+      font-size: clamp(.65rem, .75vw, .8rem);
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    /* Questions */
+    .question-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem 1.5rem;
+      margin-top: 1.8rem;
+      text-align: left;
+      max-width: 44rem;
+      margin-inline: auto;
+    }
+
+    .question-list li {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: clamp(.85rem, 1vw, 1.05rem);
+      color: var(--text-secondary);
+      line-height: 1.4;
+      list-style: none;
+      padding: .4rem 0;
+    }
+
+    .question-list li::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Arrow between stages in arch slide */
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .3rem;
+      margin-top: .3rem;
+    }
+
+    .arch-flow .arr {
+      color: var(--text-muted);
+      font-size: .8rem;
+    }
+
+    /* IA section */
+    .ia-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(.8rem, 1.5vw, 1.5rem);
+      margin-top: 2rem;
+    }
+
+    .ia-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: clamp(1rem, 1.5vw, 1.5rem);
+      text-align: left;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .ia-card h4 {
+      font-size: clamp(.85rem, 1vw, 1.1rem);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .ia-card p {
+      margin-top: .25rem;
+      font-size: clamp(.75rem, .85vw, .9rem);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .ia-note {
+      margin-top: 1.5rem;
+      padding: 1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .75rem;
+      font-size: clamp(.8rem, .9vw, .95rem);
+      color: var(--text-secondary);
+      line-height: 1.5;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .ia-note strong {
+      color: var(--text-primary);
+    }
+
+    /* Limitations */
+    .lim-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: clamp(1.2rem, 1.8vw, 1.8rem);
+      text-align: left;
+      max-width: 44rem;
+      margin-inline: auto;
+      margin-top: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .lim-card + .lim-card {
+      margin-top: .8rem;
+    }
+
+    .lim-card .lim-num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .lim-card:nth-child(1) .lim-num { color: var(--accent-amber); }
+    .lim-card:nth-child(2) .lim-num { color: var(--accent-violet); }
+
+    .lim-card h4 {
+      margin-top: .3rem;
+      font-size: clamp(.9rem, 1.1vw, 1.2rem);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .lim-card p {
+      margin-top: .25rem;
+      font-size: clamp(.8rem, .9vw, .95rem);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    /* Transition slide */
+    .slide-transition h2 {
+      font-size: clamp(3rem, 6vw, 7rem);
+      margin-bottom: 1rem;
+    }
+
+    .slide-transition .year-big {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: clamp(3.5rem, 7vw, 8rem);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -.05em;
+      line-height: 1;
+      margin-top: 2rem;
+    }
+
+    .slide-transition .event {
+      margin-top: .5rem;
+      font-size: clamp(1rem, 1.4vw, 1.5rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* Navigation */
+    #nav {
+      position: fixed;
+      bottom: clamp(1.5rem, 3vh, 3rem);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: .4rem;
+      align-items: center;
+    }
+
+    #nav .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      border: none;
+      background: var(--border);
+      transition: background 300ms ease, transform 300ms ease;
+      cursor: pointer;
+      padding: 0;
+      appearance: none;
+    }
+
+    #nav .dot.active {
+      background: var(--text-primary);
+      transform: scale(1.5);
+    }
+
+    #nav .dot:hover {
+      background: var(--text-muted);
+    }
+
+    /* Progress bar */
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      z-index: 10;
+      background: var(--text-primary);
+      transition: width 350ms ease;
+      opacity: .15;
+    }
+
+    /* Slide number */
+    #slide-num {
+      position: fixed;
+      bottom: clamp(1.5rem, 3vh, 3rem);
+      right: clamp(1.5rem, 3vw, 3rem);
+      z-index: 10;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: .65rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: .02em;
+    }
+
+    /* Hint */
+    #hint {
+      position: fixed;
+      bottom: clamp(4.5rem, 8vh, 8rem);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-size: .65rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 600ms ease;
+      pointer-events: none;
+    }
+
+    #hint.visible { opacity: 1; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .source-grid { grid-template-columns: 1fr; }
+      .chapter-road { grid-template-columns: 1fr; gap: .5rem; }
+      .comparison { grid-template-columns: 1fr; }
+      .comp-vs { display: none; }
+      .question-list { grid-template-columns: 1fr; }
+      .ia-grid { grid-template-columns: 1fr; }
+      .pipeline { flex-direction: column; gap: .3rem; }
+      .pipeline-arrow { transform: rotate(90deg); font-size: .7rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide { transition: opacity 300ms ease, visibility 300ms ease; }
+      #progress { transition: width 200ms ease; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+  <div id="slides">
+
+    <!-- 1 · Title -->
+    <section class="slide active" data-index="0">
+      <div class="slide-inner">
+        <p class="eyebrow">Proyecto de visualización de datos</p>
+        <h1>De Sputnik a Starlink</h1>
+        <p class="subtitle">Cómo el espacio dejó de ser una carrera entre superpotencias y se convirtió en una economía orbital.</p>
+        <div class="divider"></div>
+        <p class="meta-line">Javier Muñoz Romero</p>
+        <p class="meta-line">Máster en Ciencia de Datos · Universitat Oberta de Catalunya</p>
+        <p class="meta-line" style="margin-top:.6rem">Visualización de Datos · Curso 2025–2026</p>
+      </div>
+    </section>
+
+    <!-- 2 · Key questions (20%) -->
+    <section class="slide" data-index="1">
+      <div class="slide-inner">
+        <p class="eyebrow">Preguntas clave</p>
+        <h2>¿Qué historia cuentan estos datos?</h2>
+        <ul class="question-list">
+          <li>¿Cómo ha evolucionado la actividad espacial desde 1957?</li>
+          <li>¿Qué países y organizaciones han liderado cada etapa?</li>
+          <li>¿Cómo se ha producido la transición del monopolio público al mercado privado?</li>
+          <li>¿Ha mejorado la fiabilidad técnica con el tiempo?</li>
+          <li>¿Qué servicios orbitales existen hoy y quién los opera?</li>
+        </ul>
+        <p class="body-text">Cada pregunta se responde a través de un capítulo con su propia combinación de visualización e interactividad.</p>
+      </div>
+    </section>
+
+    <!-- 3 · Dataset (15%) -->
+    <section class="slide" data-index="2">
+      <div class="slide-inner">
+        <p class="eyebrow">Conjunto de datos</p>
+        <h2>Tres fuentes, un solo dataset</h2>
+        <div class="source-grid">
+          <div class="source-card">
+            <span class="badge">Fuente principal</span>
+            <strong>GCAT</strong>
+            <p>General Catalog of Artificial Space Objects. Registro detallado de lanzamientos desde 1957.</p>
+            <p class="stat">Columna vertebral histórica</p>
+          </div>
+          <div class="source-card">
+            <span class="badge">Complemento</span>
+            <strong>Space_Missions_Cleaned</strong>
+            <p>Misiones con estado de cohete, éxito de lanzamiento y proveedor.</p>
+            <p class="stat">Datos de fiabilidad</p>
+          </div>
+          <div class="source-card">
+            <span class="badge">Enriquecimiento</span>
+            <strong>UCS Satellite Database</strong>
+            <p>Satélites activos con operador, órbita, propósito y masa.</p>
+            <p class="stat">Cobertura parcial (4,58%)</p>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <strong>11.627</strong>
+            <span>registros</span>
+          </div>
+          <div class="metric">
+            <strong>41</strong>
+            <span>columnas</span>
+          </div>
+          <div class="metric">
+            <strong>1957–2026</strong>
+            <span>cobertura temporal</span>
+          </div>
+        </div>
+        <p class="body-text">Preparación: profiling con ydata-profiling, normalización de países y órbitas, y variables derivadas como tipo de organización y clasificación de éxito.</p>
+      </div>
+    </section>
+
+    <!-- 4 · Process: stages (20%) -->
+    <section class="slide" data-index="3">
+      <div class="slide-inner">
+        <p class="eyebrow">Proceso de creación</p>
+        <h2>Etapas del desarrollo</h2>
+        <div class="pipeline">
+          <span class="pipeline-step">Datos originales</span>
+          <span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Limpieza</span>
+          <span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Integración</span>
+          <span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Enriquecimiento</span>
+          <span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Análisis</span>
+          <span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">Visualización</span>
+        </div>
+        <p class="body-text">
+          El pipeline completo está documentado en un Jupyter Notebook. El análisis exploratorio se realizó con Plotly y la limpieza incluyó normalización de países, organizaciones, órbitas y propósitos. Se crearon variables derivadas como tipo de organización, clasificación de éxito y grupos de propósito.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5 · Process: design decisions (20%) -->
+    <section class="slide" data-index="4">
+      <div class="slide-inner">
+        <p class="eyebrow">Decisión de diseño</p>
+        <h2>¿Por qué no un dashboard?</h2>
+        <div class="comparison">
+          <div class="comp-card dim">
+            <p class="comp-label">Dashboard clásico</p>
+            <h4>Exploración libre</h4>
+            <p>Filtros globales, tablas dinámicas, el usuario decide qué analizar.</p>
+          </div>
+          <div class="comp-vs">vs</div>
+          <div class="comp-card highlight">
+            <p class="comp-label">Reportaje interactivo</p>
+            <h4>Narrativa guiada</h4>
+            <p>Capítulos con progresión argumental, ritmo editorial y contexto.</p>
+          </div>
+        </div>
+        <p class="body-text">
+          Elegí el reportaje porque la pregunta no era «explora estos datos», sino <strong>«esta es la historia que cuentan»</strong>.
+          El scrollytelling permite ordenar, contextualizar y enfatizar los hallazgos.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6 · Process: narrative architecture (20%) -->
+    <section class="slide" data-index="5">
+      <div class="slide-inner">
+        <p class="eyebrow">Fundamentos narrativos</p>
+        <h2>Cinco capítulos, una progresión</h2>
+        <div class="chapter-road">
+          <div class="chapter-node">
+            <div class="num">01</div>
+            <span class="label">Evolución<br />Cronología</span>
+            <div class="arch-flow"><span class="arr">↓</span></div>
+          </div>
+          <div class="chapter-node">
+            <div class="num">02</div>
+            <span class="label">Liderazgo<br />Mapa + ranking</span>
+            <div class="arch-flow"><span class="arr">↓</span></div>
+          </div>
+          <div class="chapter-node">
+            <div class="num">03</div>
+            <span class="label">Público vs privado<br />Transformación</span>
+            <div class="arch-flow"><span class="arr">↓</span></div>
+          </div>
+          <div class="chapter-node">
+            <div class="num">04</div>
+            <span class="label">Fiabilidad<br />Éxitos y fallos</span>
+            <div class="arch-flow"><span class="arr">↓</span></div>
+          </div>
+          <div class="chapter-node">
+            <div class="num">05</div>
+            <span class="label">Infraestructura<br />Servicios orbitales</span>
+          </div>
+        </div>
+        <p class="body-text">
+          Cada capítulo tiene una pregunta conductora, un tipo de visualización distinto y una transición que conecta con el siguiente. El ritmo está pensado para mantener el interés sin abrumar.
+        </p>
+      </div>
+    </section>
+
+    <!-- 7 · IA use -->
+    <section class="slide" data-index="6">
+      <div class="slide-inner">
+        <p class="eyebrow">Uso de inteligencia artificial</p>
+        <h2>La IA como apoyo, no como autora</h2>
+        <div class="ia-grid">
+          <div class="ia-card">
+            <h4>Programación</h4>
+            <p>Prototipado de componentes D3, estructura CSS, refactorización de scripts y depuración de código.</p>
+          </div>
+          <div class="ia-card">
+            <h4>Guión y narrativa</h4>
+            <p>Exploración de enfoques narrativos, refinamiento del tono editorial y organización de los capítulos.</p>
+          </div>
+        </div>
+        <div class="ia-note">
+          La IA se utilizó como herramienta de apoyo para agilizar tareas, pero <strong>todas las decisiones de diseño, la validación de datos, la estructura visual y las conclusiones fueron realizadas por el autor</strong>. Cada cifra y afirmación fue verificada manualmente contra las fuentes originales.
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 · Interactivity (15%) -->
+    <section class="slide" data-index="7">
+      <div class="slide-inner">
+        <p class="eyebrow">Interactividad</p>
+        <h2>Navegar, explorar, descubrir</h2>
+        <div class="source-grid">
+          <div class="source-card">
+            <strong>Scrollytelling</strong>
+            <p>El avance por la historia activa animaciones y transiciones entre escenas.</p>
+          </div>
+          <div class="source-card">
+            <strong>Gráficos interactivos</strong>
+            <p>Tooltips con datos al pasar el ratón, zoom en mapas y selección de períodos.</p>
+          </div>
+          <div class="source-card">
+            <strong>Accesibilidad</strong>
+            <p>Contraste suficiente, navegación por teclado, texto alternativo y ritmo pausado en transiciones.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · Final reflection (10%) -->
+    <section class="slide" data-index="8">
+      <div class="slide-inner">
+        <p class="eyebrow">Reflexión final</p>
+        <h2>Qué aprendí y qué me falta</h2>
+        <div class="lim-card">
+          <div class="lim-num">4,58%</div>
+          <h4>Cobertura limitada de la UCS</h4>
+          <p>Solo el 4,58% de los registros tienen información de satélite enriquecida. Me habría gustado cruzar más variables satelitales como masa, vida útil o frecuencia de reemplazo.</p>
+        </div>
+        <div class="lim-card">
+          <div class="lim-num">27,9%</div>
+          <h4>Registros sin clasificación pública o privada</h4>
+          <p>El 27,9% de los registros no permiten determinar el tipo de actor. Aprendí que no ocultar las limitaciones es parte del rigor.</p>
+        </div>
+        <p class="body-text">
+          Si tuviera más tiempo: visualizaciones orbitales 3D, comparación entre constelaciones y una sección de exploración libre con filtros dinámicos.
+        </p>
+      </div>
+    </section>
+
+    <!-- 10 · Transition -->
+    <section class="slide slide-transition" data-index="9">
+      <div class="slide-inner">
+        <p class="eyebrow">Comienza la visualización</p>
+        <h2>Entramos en la historia.</h2>
+        <div class="year-big">1957</div>
+        <p class="event">Sputnik inaugura la era espacial.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="nav" role="tablist" aria-label="Navegación de diapositivas"></div>
+  <p id="slide-num">01 / 10</p>
+  <p id="hint">← → o ESPACIO para navegar</p>
+
+  <script>
+    (function () {
+      const slides = document.querySelectorAll('.slide');
+      const nav = document.getElementById('nav');
+      const progress = document.getElementById('progress');
+      const slideNum = document.getElementById('slide-num');
+      const hint = document.getElementById('hint');
+      let current = 0;
+      const total = slides.length;
+
+      for (let i = 0; i < total; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', 'Ir a diapositiva ' + (i + 1));
+        dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        dot.addEventListener('click', function () { goTo(i); });
+        nav.appendChild(dot);
+      }
+
+      function goTo(index) {
+        if (index < 0) index = 0;
+        if (index >= total) index = total - 1;
+        if (index === current) return;
+
+        slides.forEach(function (s, i) {
+          s.classList.toggle('active', i === index);
+        });
+
+        const dots = nav.querySelectorAll('.dot');
+        dots.forEach(function (d, i) {
+          d.classList.toggle('active', i === index);
+          d.setAttribute('aria-selected', i === index ? 'true' : 'false');
+        });
+
+        progress.style.width = ((index + 1) / total * 100) + '%';
+        progress.setAttribute('aria-valuenow', Math.round((index + 1) / total * 100));
+
+        slideNum.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+
+        current = index;
+        hint.classList.remove('visible');
+        slides[index].focus();
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          next();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          prev();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          goTo(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          goTo(total - 1);
+        }
+      });
+
+      let wheelTimeout = false;
+      document.addEventListener('wheel', function (e) {
+        if (wheelTimeout) return;
+        wheelTimeout = true;
+        setTimeout(function () { wheelTimeout = false; }, 500);
+        if (e.deltaY > 0) next();
+        else prev();
+      }, { passive: true });
+
+      let touchStartY = 0;
+      document.addEventListener('touchstart', function (e) {
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function (e) {
+        const diff = touchStartY - e.changedTouches[0].screenY;
+        if (Math.abs(diff) > 40) {
+          if (diff > 0) next();
+          else prev();
+        }
+      }, { passive: true });
+
+      setTimeout(function () { hint.classList.add('visible'); }, 800);
+      setTimeout(function () { hint.classList.remove('visible'); }, 5000);
+
+      progress.style.width = (1 / total * 100) + '%';
+      slides[0].setAttribute('tabindex', '-1');
+    })();
+  </script>
+</body>
+</html>

@@ -4,14 +4,17 @@ dist/
 .DS_Store
 npm-debug.log*
 
-# Local data and analysis assets not needed for the published Astro app
-01_datos/
-02_notebooks/
-03_scripts/
-04_informes/
-requirements.txt
-setup.sh
-DESIGN_SYSTEM.md
+# Root-level data and analysis directories (not needed for published Astro app)
+/01_datos/
+/02_notebooks/
+/03_scripts/
+/04_informes/
+/requirements.txt
+/setup.sh
+/DESIGN_SYSTEM.md
+
+# Large generated HTML reports inside data-processing/
+data-processing/04_informes/**/*.html
 
 # Python/local caches
 __pycache__/
