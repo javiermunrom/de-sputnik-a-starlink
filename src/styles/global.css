@@ -514,70 +514,44 @@ a {
 }
 
 .chapter-one-header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 8;
-  width: min(100% - clamp(0.5rem, 1.5vw, 2rem), 156rem);
+  width: min(100% - clamp(1.25rem, 4vw, 5rem), 142rem);
   margin-inline: auto;
   display: grid;
-  grid-template-columns: minmax(34rem, 0.72fr) minmax(0, 1.28fr);
-  gap: clamp(2rem, 5vw, 7rem);
-  align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 0 0 2rem 2rem;
-  background:
-    linear-gradient(90deg, rgba(5, 8, 22, 0), rgba(5, 8, 22, 0.94) 6%, rgba(5, 8, 22, 0.88) 94%, rgba(5, 8, 22, 0)),
-    linear-gradient(180deg, rgba(5, 8, 22, 0.98), rgba(5, 8, 22, 0.72));
-  box-shadow:
-    0 26px 80px rgba(0, 0, 0, 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  padding: clamp(1.15rem, 2vw, 2rem) clamp(1.5rem, 4vw, 4.5rem);
-  backdrop-filter: blur(18px);
-  overflow: hidden;
+  grid-template-columns: minmax(24rem, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(3rem, 7vw, 10rem);
+  align-items: end;
+  border-bottom: 1px solid rgba(237, 244, 255, 0.14);
+  padding-block: clamp(2rem, 5vw, 5.5rem) clamp(2rem, 4vw, 4.5rem);
 }
 
 .chapter-one-header::before,
 .chapter-one-header::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(2rem, 8vw, 9rem);
-  pointer-events: none;
-  z-index: -1;
-}
-
-.chapter-one-header::before {
-  left: 0;
-  background: linear-gradient(90deg, rgba(5, 8, 22, 0), rgba(5, 8, 22, 0.65));
-}
-
-.chapter-one-header::after {
-  right: 0;
-  background: linear-gradient(270deg, rgba(5, 8, 22, 0), rgba(5, 8, 22, 0.65));
+  content: none;
 }
 
 .chapter-one-header h2 {
   color: #fff;
   font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
-  font-size: clamp(2.2rem, 3.4vw, 4.8rem);
+  font-size: clamp(3.6rem, 7.2vw, 10rem);
   font-weight: 700;
-  letter-spacing: -0.065em;
-  line-height: 0.95;
-  white-space: nowrap;
+  letter-spacing: -0.085em;
+  line-height: 0.86;
 }
 
 .chapter-one-intro-copy {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1.25rem, 2.4vw, 3rem);
+  gap: clamp(1rem, 1.8vw, 1.45rem);
+  max-width: 48rem;
   color: var(--text-secondary);
-  font-size: clamp(0.95rem, 1vw, 1.12rem);
-  line-height: 1.5;
+  font-size: clamp(1.08rem, 1.25vw, 1.35rem);
+  line-height: 1.45;
 }
 
 .chapter-one-intro-copy p {
-  padding-inline: clamp(0.35rem, 0.8vw, 0.9rem);
+  border-left: 1px solid rgba(237, 244, 255, 0.16);
+  padding-left: clamp(1rem, 2vw, 1.6rem);
 }
 
 .chapter-one-intro-copy p:first-child {
@@ -1913,9 +1887,13 @@ a {
 
 .reliability-opening {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(22rem, 0.9fr);
+  grid-template-columns: minmax(22rem, 0.72fr) minmax(0, 1.28fr);
   gap: clamp(2rem, 5vw, 7rem);
-  align-items: end;
+  align-items: center;
+  min-height: min(92vh, 64rem);
+  border-top: 1px solid rgba(237, 244, 255, 0.18);
+  border-bottom: 1px solid rgba(237, 244, 255, 0.10);
+  padding-block: clamp(4rem, 8vw, 8rem);
 }
 
 .reliability-opening h2,
@@ -1930,14 +1908,70 @@ a {
 
 .reliability-opening h2 {
   margin-top: 0.8rem;
-  font-size: clamp(4rem, 8vw, 10.5rem);
+  font-size: clamp(3.6rem, 6.4vw, 9rem);
 }
 
-.reliability-opening > p:last-child {
+.reliability-opening strong {
+  display: block;
+  margin-top: 0.8rem;
+  color: #edf4ff;
+  font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+  font-size: clamp(4rem, 9vw, 12rem);
+  font-weight: 700;
+  letter-spacing: -0.09em;
+  line-height: 0.82;
+}
+
+.reliability-opening div:last-child p {
   color: var(--text-secondary);
   font-size: clamp(1.2rem, 1.85vw, 2rem);
   line-height: 1.35;
   letter-spacing: -0.04em;
+}
+
+.reliability-opening .moon-rule {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.1rem;
+  align-items: center;
+  max-width: 42rem;
+  margin-top: 1.3rem;
+  border-left: 2px solid rgba(102, 227, 255, 0.66);
+  padding-left: 1rem;
+  color: #edf4ff;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: clamp(0.92rem, 1.1vw, 1.08rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+.reliability-opening .moon-rule p {
+  flex-basis: 100%;
+}
+
+.reliability-opening .moon-rule span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.moon-legend-dot {
+  display: inline-block;
+  width: 0.78rem;
+  height: 0.78rem;
+  border-radius: 999px;
+  box-shadow: 0 0 18px currentColor;
+}
+
+.moon-legend-dot--success {
+  background: #8fd3ff;
+  color: #8fd3ff;
+}
+
+.moon-legend-dot--failure {
+  background: #ff5b6e;
+  color: #ff5b6e;
 }
 
 .moon-scroll {
@@ -2099,5 +2133,178 @@ a {
   .moon-step {
     min-height: auto;
     padding-block: 4rem;
+  }
+}
+
+.chapter-five {
+  position: relative;
+  overflow: clip;
+  background:
+    radial-gradient(circle at 24% 18%, rgba(134, 239, 172, 0.11), transparent 25rem),
+    radial-gradient(circle at 82% 46%, rgba(102, 227, 255, 0.12), transparent 34rem),
+    linear-gradient(180deg, rgba(5, 8, 22, 0.99), #06101c 46%, rgba(5, 8, 22, 0.99));
+}
+
+.chapter-five::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.22) 0 1px, transparent 1.2px),
+    radial-gradient(circle, rgba(102, 227, 255, 0.22) 0 1px, transparent 1.2px);
+  background-position: 0 0, 94px 130px;
+  background-size: 220px 220px, 360px 360px;
+  opacity: 0.32;
+  mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+}
+
+.infrastructure-scroll {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.infrastructure-visual-column {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100vh;
+  min-height: 44rem;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.infrastructure-figure {
+  width: min(100% - clamp(1rem, 3vw, 3rem), 124rem);
+  margin: 0;
+}
+
+.infrastructure-visual {
+  display: block;
+  width: 100%;
+  height: min(86vh, 62rem);
+  min-height: 38rem;
+}
+
+.infrastructure-scenes {
+  position: relative;
+  z-index: 2;
+  margin-top: -100vh;
+  pointer-events: none;
+}
+
+.infrastructure-scene {
+  min-height: 100vh;
+  width: min(100% - clamp(1.25rem, 5vw, 6rem), 154rem);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 154rem;
+  opacity: 0.36;
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+
+.infrastructure-scene.is-active {
+  opacity: 1;
+}
+
+.infrastructure-scene--hero,
+.infrastructure-scene--conclusion {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.infrastructure-scene h2 {
+  max-width: 36rem;
+  color: #fff;
+  font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+  font-size: clamp(2.2rem, 3vw, 4.15rem);
+  font-weight: 700;
+  letter-spacing: -0.065em;
+  line-height: 0.95;
+  text-shadow: 0 16px 42px rgba(0, 0, 0, 0.72);
+}
+
+.infrastructure-scene--hero h2,
+.infrastructure-scene--conclusion h2 {
+  max-width: 58rem;
+  font-size: clamp(3.2rem, 5.4vw, 8rem);
+  letter-spacing: -0.09em;
+  line-height: 0.88;
+}
+
+.infrastructure-scene--intro h2,
+.infrastructure-scene--small h2 {
+  max-width: 32rem;
+}
+
+.infrastructure-scene p:not(.eyebrow) {
+  max-width: 31rem;
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 1.25vw, 1.28rem);
+  line-height: 1.35;
+  letter-spacing: -0.035em;
+  text-shadow: 0 12px 30px rgba(0, 0, 0, 0.72);
+}
+
+.infrastructure-scene p strong {
+  color: #edf4ff;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  letter-spacing: 0.06em;
+}
+
+.infrastructure-scene--hero p:not(.eyebrow),
+.infrastructure-scene--conclusion p:not(.eyebrow) {
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 1.35vw, 1.42rem);
+  color: #d8e2f1;
+}
+
+@media (max-width: 1024px) {
+  .infrastructure-visual-column {
+    position: sticky;
+    top: 0;
+    min-height: 36rem;
+    background: linear-gradient(180deg, rgba(6, 16, 28, 0.96), rgba(6, 16, 28, 0.48));
+  }
+
+  .infrastructure-scenes {
+    margin-top: 0;
+  }
+
+  .infrastructure-scene,
+  .infrastructure-scene--hero,
+  .infrastructure-scene--conclusion {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .infrastructure-scene h2,
+  .infrastructure-scene--hero h2,
+  .infrastructure-scene--conclusion h2 {
+    max-width: 34rem;
+    font-size: clamp(2.2rem, 8vw, 4.8rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .infrastructure-figure {
+    overflow-x: auto;
+    width: min(100% - 1rem, 132rem);
+  }
+
+  .infrastructure-visual {
+    width: 64rem;
+    max-width: none;
+  }
+
+  .infrastructure-scene {
+    width: min(100% - 1.5rem, 154rem);
   }
 }

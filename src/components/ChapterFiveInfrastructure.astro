@@ -1,0 +1,301 @@
+---
+import infrastructure from '../data/chapter-five-infrastructure.json';
+---
+
+<section id="infraestructura-orbital" class="chapter-five" data-infrastructure-chapter>
+  <div class="infrastructure-scroll">
+    <div class="infrastructure-visual-column">
+      <figure class="infrastructure-figure reveal">
+        <svg class="infrastructure-visual" role="img" aria-label="El espacio como infraestructura invisible de servicios globales"></svg>
+      </figure>
+    </div>
+
+    <div class="infrastructure-scenes" aria-label="Escenas del capítulo 5">
+      <article class="infrastructure-scene infrastructure-scene--intro reveal" data-infrastructure-step="intro">
+        <p class="eyebrow">Capítulo 5</p>
+        <h2>El espacio que usamos todos los días</h2>
+        <p>Cuando pensamos en el espacio imaginamos astronautas, cohetes o exploración.</p>
+        <p>Pero la mayor parte de la actividad espacial actual tiene otro objetivo.</p>
+      </article>
+
+      <article class="infrastructure-scene infrastructure-scene--hero reveal" data-infrastructure-step="services">
+        <p class="eyebrow">¿Para qué sirve hoy?</p>
+        <h2>Hoy el espacio sirve para prestar servicios.</h2>
+        <p>En los datos recientes, los dos usos dominantes tienen el mismo peso: 149 satélites dedicados a comunicaciones y 149 a observación terrestre.</p>
+      </article>
+
+      <article class="infrastructure-scene infrastructure-scene--small reveal" data-infrastructure-step="orbits">
+        <p class="eyebrow">¿Dónde operan?</p>
+        <h2>Esta infraestructura funciona por capas.</h2>
+        <p><strong>LEO</strong> es la órbita baja, cerca de la Tierra.</p>
+        <p><strong>GEO</strong> es la órbita geoestacionaria, donde un satélite parece quedarse fijo.</p>
+      </article>
+
+      <article class="infrastructure-scene infrastructure-scene--small reveal" data-infrastructure-step="functions">
+        <p class="eyebrow">Las capas tienen funciones distintas</p>
+        <h2>GEO conecta. LEO observa.</h2>
+        <p>145 de los 149 satélites de comunicaciones operan en GEO. 128 de los 149 satélites de observación terrestre operan en LEO.</p>
+      </article>
+
+      <article class="infrastructure-scene infrastructure-scene--small reveal" data-infrastructure-step="users">
+        <p class="eyebrow">¿Quién la utiliza?</p>
+        <h2>Gobierno, mercado y defensa usan la misma infraestructura orbital.</h2>
+        <p>Los datos recogen 173 registros de uso gubernamental, 112 comerciales y 55 militares.</p>
+      </article>
+
+      <article class="infrastructure-scene infrastructure-scene--conclusion reveal" data-infrastructure-step="conclusion">
+        <h2>Dependemos del espacio mucho más de lo que creemos.</h2>
+        <p>La tendencia actual no es simplemente lanzar más satélites. Es construir una infraestructura orbital que conecta, observa y coordina actividades en la Tierra.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  import * as d3 from 'd3';
+  import earthImage from '../assets/images/tierra.png';
+  import infrastructure from '../data/chapter-five-infrastructure.json';
+
+  const chapter = document.querySelector('[data-infrastructure-chapter]');
+
+  if (chapter) {
+    const svg = d3.select(chapter.querySelector('.infrastructure-visual'));
+    const width = 1320;
+    const height = 860;
+    const center = { x: width * 0.43, y: height * 0.5 };
+    const earthRadius = 126;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900;
+    let activeStep = 'intro';
+
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('preserveAspectRatio', 'xMidYMid meet');
+
+    const defs = svg.append('defs');
+    const earthGradient = defs.append('radialGradient').attr('id', 'infra-earth-gradient').attr('cx', '42%').attr('cy', '34%');
+    earthGradient.append('stop').attr('offset', '0%').attr('stop-color', '#7dd3fc');
+    earthGradient.append('stop').attr('offset', '48%').attr('stop-color', '#0f5c8e');
+    earthGradient.append('stop').attr('offset', '100%').attr('stop-color', '#061525');
+
+    const glow = defs.append('filter').attr('id', 'infra-glow').attr('x', '-80%').attr('y', '-80%').attr('width', '260%').attr('height', '260%');
+    glow.append('feGaussianBlur').attr('stdDeviation', 10).attr('result', 'blur');
+    const merge = glow.append('feMerge');
+    merge.append('feMergeNode').attr('in', 'blur');
+    merge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+    svg.append('rect').attr('width', width).attr('height', height).attr('fill', 'transparent');
+
+    const orbitLayer = svg.append('g').attr('class', 'infra-orbit-layer').attr('opacity', 0);
+    const serviceLayer = svg.append('g').attr('class', 'infra-service-layer').attr('opacity', 0);
+    const functionLayer = svg.append('g').attr('class', 'infra-function-layer').attr('opacity', 0);
+    const userLayer = svg.append('g').attr('class', 'infra-user-layer').attr('opacity', 0);
+    const conclusionLayer = svg.append('g').attr('class', 'infra-conclusion-layer').attr('opacity', 0);
+    const earthLayer = svg.append('g').attr('class', 'infra-earth-layer');
+    const labelLayer = svg.append('g').attr('class', 'infra-label-layer').attr('opacity', 0);
+
+    const orbitRadius = (orbitId) => orbitId === 'LEO' ? 220 : 405;
+
+    const drawEarth = () => {
+      const imageSize = earthRadius * 2.45;
+      earthLayer.append('circle').attr('cx', center.x).attr('cy', center.y).attr('r', earthRadius + 28).attr('fill', 'rgba(102,227,255,0.08)').attr('filter', 'url(#infra-glow)');
+      earthLayer.append('image')
+        .attr('href', earthImage.src)
+        .attr('xlink:href', earthImage.src)
+        .attr('x', center.x - imageSize / 2)
+        .attr('y', center.y - imageSize / 2)
+        .attr('width', imageSize)
+        .attr('height', imageSize)
+        .attr('preserveAspectRatio', 'xMidYMid meet');
+      earthLayer.append('text').attr('class', 'infra-earth-label').attr('x', center.x).attr('y', center.y + earthRadius + 58).attr('text-anchor', 'middle').attr('fill', '#edf4ff').attr('font-family', 'Space Grotesk').attr('font-size', 30).attr('font-weight', 700).text('Tierra');
+    };
+
+    const ellipse = (root, radius, color = 'rgba(237,244,255,0.18)', widthStroke = 1.4) => root.append('ellipse')
+      .attr('cx', center.x)
+      .attr('cy', center.y)
+      .attr('rx', radius)
+      .attr('ry', radius * 0.58)
+      .attr('fill', 'none')
+      .attr('stroke', color)
+      .attr('stroke-width', widthStroke)
+      .attr('transform', `rotate(-14 ${center.x} ${center.y})`);
+
+    const drawOrbits = () => {
+      infrastructure.orbits.forEach((orbit) => {
+        const radius = orbitRadius(orbit.id);
+        ellipse(orbitLayer, radius, orbit.id === 'LEO' ? 'rgba(134,239,172,0.52)' : 'rgba(102,227,255,0.52)', orbit.id === 'LEO' ? 2.6 : 3.2);
+        d3.range(orbit.id === 'LEO' ? 18 : 14).forEach((i) => {
+          const angle = (i / (orbit.id === 'LEO' ? 18 : 14)) * Math.PI * 2 - 0.25;
+          orbitLayer.append('circle')
+            .attr('cx', center.x + Math.cos(angle) * radius)
+            .attr('cy', center.y + Math.sin(angle) * radius * 0.58)
+            .attr('r', orbit.id === 'LEO' ? 3.4 : 4.2)
+            .attr('fill', orbit.id === 'LEO' ? '#86efac' : '#66e3ff')
+            .attr('opacity', 0.72);
+        });
+      });
+    };
+
+    const writeLabel = (root, y, title, subtitle, detail, color) => {
+      const x = 1015;
+      root.append('line').attr('x1', x - 28).attr('x2', x - 28).attr('y1', y - 32).attr('y2', y + 62).attr('stroke', color).attr('stroke-width', 2.5).attr('stroke-linecap', 'round');
+      root.append('text').attr('x', x).attr('y', y).attr('fill', color).attr('font-family', 'IBM Plex Mono').attr('font-size', 18).attr('font-weight', 700).text(title);
+      root.append('text').attr('x', x).attr('y', y + 30).attr('fill', '#edf4ff').attr('font-family', 'Space Grotesk').attr('font-size', 25).attr('font-weight', 700).text(subtitle);
+      root.append('text').attr('x', x).attr('y', y + 58).attr('fill', '#aebbd0').attr('font-family', 'Inter').attr('font-size', 17).text(detail);
+    };
+
+    const drawServices = () => {
+      const positions = [
+        { x: 230, y: 252, icon: 'signal' },
+        { x: 230, y: 604, icon: 'sensor' }
+      ];
+      infrastructure.services.forEach((service, index) => {
+        const pos = positions[index];
+        const group = serviceLayer.append('g').attr('transform', `translate(${pos.x},${pos.y})`);
+        group.append('circle').attr('r', 96).attr('fill', `${service.color}18`).attr('stroke', service.color).attr('stroke-width', 2.4).attr('filter', 'url(#infra-glow)');
+        group.append('text').attr('y', -10).attr('text-anchor', 'middle').attr('fill', '#fff').attr('font-family', 'Space Grotesk').attr('font-size', 22).attr('font-weight', 700).text(service.label);
+        group.append('text').attr('y', 24).attr('text-anchor', 'middle').attr('fill', service.color).attr('font-family', 'IBM Plex Mono').attr('font-size', 21).attr('font-weight', 700).text(`${service.value} satélites`);
+
+        d3.range(16).forEach((i) => {
+          const angle = (i / 16) * Math.PI * 2;
+          group.append('circle').attr('cx', Math.cos(angle) * 146).attr('cy', Math.sin(angle) * 82).attr('r', 3.5).attr('fill', service.color).attr('opacity', 0.78);
+        });
+
+        if (service.id === 'communications') {
+          d3.range(5).forEach((i) => {
+            serviceLayer.append('path')
+              .attr('d', `M ${pos.x + 88} ${pos.y - 34 + i * 18} C ${center.x - 210} ${center.y - 180 + i * 70}, ${center.x - 88} ${center.y - 145 + i * 36}, ${center.x - 24} ${center.y - 86 + i * 34}`)
+              .attr('fill', 'none')
+              .attr('stroke', service.color)
+              .attr('stroke-width', 1.8)
+              .attr('stroke-opacity', 0.38);
+          });
+        } else {
+          d3.range(5).forEach((i) => {
+            serviceLayer.append('path')
+              .attr('d', `M ${pos.x + 88} ${pos.y - 34 + i * 18} C ${center.x - 220} ${center.y + 150 - i * 68}, ${center.x - 96} ${center.y + 130 - i * 32}, ${center.x - 20} ${center.y + 76 - i * 28}`)
+              .attr('fill', 'none')
+              .attr('stroke', service.color)
+              .attr('stroke-width', 1.8)
+              .attr('stroke-opacity', 0.34);
+          });
+          serviceLayer.append('rect').attr('x', center.x - 82).attr('y', center.y - 36).attr('width', 164).attr('height', 72).attr('rx', 18).attr('fill', 'none').attr('stroke', service.color).attr('stroke-width', 2).attr('stroke-opacity', 0.42).attr('stroke-dasharray', '8 10');
+        }
+      });
+    };
+
+    const drawFunctionSpecialization = () => {
+      infrastructure.specialization.forEach((item) => {
+        const radius = orbitRadius(item.orbit);
+        ellipse(functionLayer, radius, item.color, 3.2);
+        const total = item.total;
+        d3.range(total).forEach((i) => {
+          const active = i < item.value;
+          const angle = (i / total) * Math.PI * 2 + (item.orbit === 'LEO' ? 0.4 : -0.35);
+          functionLayer.append('circle')
+            .attr('cx', center.x + Math.cos(angle) * radius)
+            .attr('cy', center.y + Math.sin(angle) * radius * 0.58)
+            .attr('r', active ? 3.2 : 1.8)
+            .attr('fill', active ? item.color : 'rgba(174,187,208,0.28)')
+            .attr('opacity', active ? 0.86 : 0.34);
+        });
+      });
+
+      writeLabel(functionLayer, 178, 'GEO', 'Comunicaciones', '145 de 149 operan aquí', '#66e3ff');
+      writeLabel(functionLayer, 560, 'LEO', 'Observación terrestre', '128 de 149 operan aquí', '#86efac');
+    };
+
+    const drawUsers = () => {
+      infrastructure.users.forEach((user, index) => {
+        const y = 214 + index * 154;
+        writeLabel(userLayer, y, user.label, `${user.value} registros`, 'convergen en la misma red orbital', user.color);
+        userLayer.append('path')
+          .attr('d', `M 984 ${y + 18} C 860 ${y - 16}, 780 ${center.y - 170 + index * 110}, ${center.x + 230} ${center.y - 92 + index * 70}`)
+          .attr('fill', 'none')
+          .attr('stroke', user.color)
+          .attr('stroke-width', 4 - index * 0.45)
+          .attr('stroke-opacity', 0.48)
+          .attr('stroke-linecap', 'round');
+      });
+      ellipse(userLayer, orbitRadius('LEO'), 'rgba(134,239,172,0.36)', 2.2);
+      ellipse(userLayer, orbitRadius('GEO'), 'rgba(102,227,255,0.36)', 2.2);
+    };
+
+    const drawConclusion = () => {
+      ellipse(conclusionLayer, orbitRadius('LEO'), 'rgba(134,239,172,0.28)', 1.8);
+      ellipse(conclusionLayer, orbitRadius('GEO'), 'rgba(102,227,255,0.30)', 2.1);
+      d3.range(18).forEach((i) => {
+        const angle = (i / 18) * Math.PI * 2;
+        const r = i % 2 ? orbitRadius('GEO') : orbitRadius('LEO');
+        const x = center.x + Math.cos(angle) * r;
+        const y = center.y + Math.sin(angle) * r * 0.58;
+        conclusionLayer.append('path')
+          .attr('d', `M ${x} ${y} C ${center.x + Math.cos(angle) * 180} ${center.y + Math.sin(angle) * 92}, ${center.x + Math.cos(angle + 0.6) * 120} ${center.y + Math.sin(angle + 0.6) * 80}, ${center.x} ${center.y}`)
+          .attr('fill', 'none')
+          .attr('stroke', i % 2 ? '#66e3ff' : '#86efac')
+          .attr('stroke-opacity', 0.16)
+          .attr('stroke-width', 1.5);
+      });
+    };
+
+    drawEarth();
+    drawOrbits();
+    drawServices();
+    drawFunctionSpecialization();
+    drawUsers();
+    drawConclusion();
+    writeLabel(labelLayer, 190, 'LEO', 'Órbita baja', 'cerca de la Tierra', '#86efac');
+    writeLabel(labelLayer, 560, 'GEO', 'Órbita geoestacionaria', 'parece fija desde Tierra', '#66e3ff');
+
+    const setLayer = (selection, visible, delay = 0) => {
+      selection.transition().delay(delay).duration(duration).ease(d3.easeCubicInOut).attr('opacity', visible ? 1 : 0);
+    };
+
+    const update = (step) => {
+      const showOrbits = ['orbits', 'functions', 'users', 'conclusion'].includes(step);
+      setLayer(serviceLayer, step === 'services');
+      setLayer(orbitLayer, showOrbits && step !== 'functions');
+      setLayer(labelLayer, showOrbits && step !== 'functions' && step !== 'users' && step !== 'conclusion');
+      setLayer(functionLayer, step === 'functions');
+      setLayer(userLayer, step === 'users');
+      setLayer(conclusionLayer, step === 'conclusion');
+      earthLayer.transition().duration(duration).attr('opacity', 1);
+      svg.select('.infra-earth-label').transition().duration(duration).attr('opacity', step === 'intro' ? 1 : 0.38);
+    };
+
+    const steps = Array.from(chapter.querySelectorAll('[data-infrastructure-step]'));
+    let ticking = false;
+    const updateActiveStep = () => {
+      const targetY = window.innerHeight * 0.54;
+      let closest = null;
+      let closestDistance = Number.POSITIVE_INFINITY;
+      steps.forEach((step) => {
+        const rect = step.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        const distance = Math.abs(rect.top + rect.height * 0.5 - targetY);
+        if (distance < closestDistance) {
+          closest = step;
+          closestDistance = distance;
+        }
+      });
+
+      const step = closest?.getAttribute('data-infrastructure-step');
+      if (!step || step === activeStep) return;
+      activeStep = step;
+      steps.forEach((item) => item.classList.toggle('is-active', item === closest));
+      update(step);
+    };
+
+    const requestUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        updateActiveStep();
+      });
+    };
+
+    steps[0]?.classList.add('is-active');
+    update('intro');
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    updateActiveStep();
+  }
+</script>

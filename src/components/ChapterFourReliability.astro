@@ -8,9 +8,19 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
 
 <section id="fiabilidad-espacial" class="chapter-four" data-reliability-chapter>
   <div class="reliability-opening reveal">
-    <p class="eyebrow">Capitulo 4 / Fiabilidad</p>
-    <h2>La Luna deja de ser un blanco incierto.</h2>
-    <p>Éxitos y fallos orbitan una misma escena. Cuanto más fiable se vuelve una época, más cerca queda su actividad del centro.</p>
+    <div>
+      <p class="eyebrow">Capitulo 4</p>
+      <strong>Fiabilidad espacial</strong>
+    </div>
+    <div>
+      <h2>La Luna deja de ser un blanco incierto.</h2>
+      <p>Éxitos y fallos orbitan una misma escena. Cuanto más fiable se vuelve una época, más cerca queda su actividad del centro.</p>
+      <div class="moon-rule" aria-label="Leyenda de éxitos y fallos">
+        <p>La distancia al centro representa fiabilidad colectiva.</p>
+        <span><i class="moon-legend-dot moon-legend-dot--success"></i>Éxitos</span>
+        <span><i class="moon-legend-dot moon-legend-dot--failure"></i>Fallos</span>
+      </div>
+    </div>
   </div>
 
   <div class="moon-scroll" data-moon-scroll>
@@ -27,7 +37,7 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
     <div class="moon-visual-column">
       <figure class="moon-figure reveal">
         <svg class="moon-reliability-visual" role="img" aria-label="Lanzamientos como puntos que se concentran alrededor de la Luna al aumentar la fiabilidad"></svg>
-        <figcaption class="moon-caption">La distancia al centro representa fiabilidad colectiva. Azul: éxitos. Rojo: fallos.</figcaption>
+        <figcaption class="moon-caption"></figcaption>
       </figure>
     </div>
   </div>
@@ -53,14 +63,13 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
     const caption = chapter.querySelector('.moon-caption');
     const width = 1280;
     const height = 860;
-    const center = { x: width * 0.58, y: height * 0.5 };
-    const moonRadius = 118;
+    const center = { x: width * 0.54, y: height * 0.5 };
+    const moonRadius = 104;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const duration = prefersReduced ? 0 : 1450;
     const pointCount = 240;
     const colors = { success: '#8fd3ff', failure: '#ff5b6e' };
     let activeId = milestones[0].id;
-    let finalOrbitDrawn = false;
 
     svg.attr('viewBox', `0 0 ${width} ${height}`).attr('preserveAspectRatio', 'xMidYMid meet');
 
@@ -91,7 +100,7 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
 
     svg.append('rect').attr('width', width).attr('height', height).attr('fill', 'transparent');
     const orbitLayer = svg.append('g').attr('class', 'moon-orbits');
-    [190, 285, 390].forEach((radius, index) => {
+    [165, 240, 325].forEach((radius, index) => {
       orbitLayer.append('ellipse')
         .attr('cx', center.x)
         .attr('cy', center.y)
@@ -125,22 +134,21 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
     });
     moon.append('circle').attr('cx', center.x - 32).attr('cy', center.y - 40).attr('r', moonRadius * 0.9).attr('fill', 'rgba(255,255,255,0.09)');
 
-    const label = svg.append('g').attr('class', 'moon-readout').attr('transform', `translate(${center.x - 510},${center.y - 282})`);
-    label.append('text').attr('class', 'moon-readout-year').attr('fill', '#ffffff').attr('font-family', 'Space Grotesk').attr('font-size', 92).attr('font-weight', 700).attr('letter-spacing', '-7');
-    label.append('text').attr('class', 'moon-readout-message').attr('y', 48).attr('fill', '#aebbd0').attr('font-family', 'Inter').attr('font-size', 22);
+    const label = svg.append('g').attr('class', 'moon-readout').attr('transform', `translate(${center.x - 420},${center.y - 260})`);
+    label.append('text').attr('class', 'moon-readout-percent').attr('fill', '#ffffff').attr('font-family', 'Space Grotesk').attr('font-size', 98).attr('font-weight', 700).attr('letter-spacing', '-8');
+    label.append('text').attr('class', 'moon-readout-caption').attr('y', 48).attr('fill', '#aebbd0').attr('font-family', 'IBM Plex Mono').attr('font-size', 18).attr('letter-spacing', '2').text('éxito de lanzamiento');
 
     const finalOrbit = svg.append('g').attr('class', 'moon-final-orbit').attr('opacity', 0);
-    finalOrbit.append('ellipse').attr('cx', center.x).attr('cy', center.y).attr('rx', moonRadius + 66).attr('ry', moonRadius + 24).attr('fill', 'none').attr('stroke', 'rgba(102,227,255,0.72)').attr('stroke-width', 3).attr('transform', `rotate(-18 ${center.x} ${center.y})`);
-    finalOrbit.append('text').attr('x', center.x).attr('y', center.y + moonRadius + 108).attr('text-anchor', 'middle').attr('fill', '#edf4ff').attr('font-family', 'Space Grotesk').attr('font-size', 30).attr('font-weight', 700).text('operación fiable');
+    finalOrbit.append('ellipse').attr('cx', center.x).attr('cy', center.y).attr('rx', moonRadius + 58).attr('ry', moonRadius + 20).attr('fill', 'none').attr('stroke', 'rgba(102,227,255,0.72)').attr('stroke-width', 3).attr('transform', `rotate(-18 ${center.x} ${center.y})`);
 
     const positionFor = (point, milestone) => {
       const failureShare = 1 - milestone.successRate;
       const isFailure = point.id < Math.round(pointCount * failureShare);
-      const organic = Math.sin(point.id * 0.77 + milestone.cohesion * 4.1) * 20;
-      const spread = 470 - milestone.cohesion * 320;
-      const successRadius = moonRadius + 42 + (1 - milestone.cohesion) * 260 + point.jitter * spread * 0.45 + organic;
-      const failureRadius = moonRadius + 210 + point.jitter * (300 - milestone.cohesion * 110) + organic * 1.8;
-      const finalOrbitRadius = moonRadius + 66 + (point.jitter - 0.5) * 16;
+      const organic = Math.sin(point.id * 0.77 + milestone.cohesion * 4.1) * 16;
+      const spread = 380 - milestone.cohesion * 245;
+      const successRadius = moonRadius + 36 + (1 - milestone.cohesion) * 205 + point.jitter * spread * 0.36 + organic;
+      const failureRadius = moonRadius + 174 + point.jitter * (220 - milestone.cohesion * 72) + organic * 1.15;
+      const finalOrbitRadius = moonRadius + 58 + (point.jitter - 0.5) * 12;
       const radius = milestone.id === '2025' && !isFailure
         ? finalOrbitRadius
         : isFailure
@@ -152,7 +160,7 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
         x: center.x + Math.cos(angle) * radius,
         y: center.y + Math.sin(angle) * radius * flatten,
         type: isFailure ? 'failure' : 'success',
-        radius: isFailure ? 4.8 : milestone.id === '2025' ? 4.2 : 3.9 + milestone.cohesion * 1.2,
+        radius: isFailure ? 4.2 : milestone.id === '2025' ? 3.8 : 3.5 + milestone.cohesion * 1.05,
         opacity: isFailure ? 0.88 : 0.48 + milestone.cohesion * 0.35,
       };
     };
@@ -167,14 +175,10 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
         .attr('fill', (d) => colors[d.type])
         .attr('opacity', (d) => d.opacity);
 
-      svg.select('.moon-readout-year').text(milestone.label);
-      svg.select('.moon-readout-message').text(milestone.message);
-      caption.textContent = milestone.id === '2025'
-        ? 'Los puntos se reorganizan en una órbita estable alrededor de la Luna: el riesgo no desaparece, pero deja de dominar la escena.'
-        : 'Cuanto más cerca quedan los puntos del centro, más rutinaria se vuelve la operación espacial.';
+      svg.select('.moon-readout-percent').text(`${Math.round(milestone.successRate * 100)}%`);
+      caption.textContent = '';
 
       finalOrbit.transition().duration(duration).ease(d3.easeCubicInOut).attr('opacity', milestone.id === '2025' ? 1 : 0);
-      finalOrbitDrawn = milestone.id === '2025';
     };
 
     const steps = Array.from(chapter.querySelectorAll('[data-moon-step]'));

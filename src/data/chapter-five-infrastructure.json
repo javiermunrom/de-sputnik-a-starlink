@@ -1,0 +1,72 @@
+{
+  "services": [
+    {
+      "id": "communications",
+      "label": "COMUNICACIONES",
+      "value": 149,
+      "color": "#66e3ff",
+      "description": "Señales, conexiones y red global."
+    },
+    {
+      "id": "earth-observation",
+      "label": "OBSERVACIÓN TERRESTRE",
+      "value": 149,
+      "color": "#86efac",
+      "description": "Sensores, imágenes y monitorización del planeta."
+    }
+  ],
+  "orbits": [
+    {
+      "id": "LEO",
+      "label": "Órbita baja",
+      "plain": "Cerca de la Tierra. Ideal para observar el planeta con detalle.",
+      "radius": 0.36
+    },
+    {
+      "id": "GEO",
+      "label": "Órbita geoestacionaria",
+      "plain": "Muy alta. El satélite parece quedarse fijo sobre un punto de la Tierra.",
+      "radius": 0.78
+    }
+  ],
+  "specialization": [
+    {
+      "id": "geo-communications",
+      "orbit": "GEO",
+      "service": "COMUNICACIONES",
+      "value": 145,
+      "total": 149,
+      "color": "#66e3ff",
+      "message": "GEO funciona como una gran plataforma de comunicaciones."
+    },
+    {
+      "id": "leo-observation",
+      "orbit": "LEO",
+      "service": "OBSERVACIÓN TERRESTRE",
+      "value": 128,
+      "total": 149,
+      "color": "#86efac",
+      "message": "LEO es la capa desde la que se observa la Tierra."
+    }
+  ],
+  "users": [
+    {
+      "id": "government",
+      "label": "Gobierno",
+      "value": 173,
+      "color": "#8fd3ff"
+    },
+    {
+      "id": "commercial",
+      "label": "Comercial",
+      "value": 112,
+      "color": "#c084fc"
+    },
+    {
+      "id": "military",
+      "label": "Militar",
+      "value": 55,
+      "color": "#ffb86b"
+    }
+  ]
+}
