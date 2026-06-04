@@ -1,0 +1,6 @@
+Pregunta,Cobertura util v2 %,Cobertura provisional %,Mejora pp,Nivel confianza,Variables clave
+Evolucion de lanzamientos,100.0,100.0,0.0,Alta,"year, decade, space_era, preferred_for_launch_count"
+Liderazgo de actores,100.0,100.0,0.0,Alta,"year, country, launch_provider, satellite_operator_country"
+Publico vs privado,72.54,45.94,26.6,Media,"year, organization_type, launch_provider, satellite_operator"
+Tasa de exito,97.97,93.32,4.65,Alta,"year, mission_success_binary, mission_status"
+Tendencias actuales,4.58,2.29,2.29,Parcial,"year, orbit_group, purpose_group, mass_group, satellite_mass_kg"

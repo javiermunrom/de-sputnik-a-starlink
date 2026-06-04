@@ -1,0 +1,17 @@
+Columna,% nulos,Accion,Justificacion
+launch_date,43.04,mantener nulos e inferir year cuando sea posible,"La fecha exacta no siempre es recuperable, pero year conserva la utilidad temporal principal."
+name_key,0.09,mantener nulos,No existe una imputacion segura sin crear informacion artificial.
+ucs_satellite_name,95.42,mantener nulos,No existe una imputacion segura sin crear informacion artificial.
+satellite_operator,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+satellite_operator_country,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+satellite_users,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+satellite_purpose,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+satellite_detailed_purpose,98.33,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+orbit_type,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+orbit_subtype,98.14,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+satellite_mass_kg,95.83,mantener nulos,Variable numerica de alto valor para tendencias actuales; imputar mediana distorsionaria la masa real. Se usa mass_group = Unknown para visualizacion categorica.
+ucs_launch_vehicle,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+ucs_launch_site,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+cospar_number,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+norad_number,95.42,imputar con No UCS match,Campo categorico: una categoria explicita permite filtrar y no confunde ausencia de dato con dato real.
+mission_success_binary,2.03,mantener nulos,No todos los codigos de estado son comparables; imputar exito/fallo introduceria sesgo.

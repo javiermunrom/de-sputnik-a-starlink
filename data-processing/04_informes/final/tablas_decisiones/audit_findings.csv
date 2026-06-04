@@ -1,0 +1,11 @@
+Problema,Impacto,Accion propuesta
+La masa satelital esta muy incompleta; usarla solo para tendencias parciales o subconjuntos enriquecidos.,Medio,Mitigar en pipeline v2
+GCAT y Space_Missions pueden solaparse; para conteos usar preferred_for_launch_count para evitar doble conteo.,Alto,Mitigar en pipeline v2
+Los registros de 2026 pueden estar incompletos porque el anio esta en curso o depende de actualizaciones de GCAT.,Medio,Mitigar en pipeline v2
+Mantener las tablas de normalizacion de paises y organizaciones junto al dataset final.,Medio,Corregir en v2 y documentar
+Validar manualmente la clasificacion `organization_type` en actores ambiguos.,Medio,Corregir en v2 y documentar
+Usar `preferred_for_launch_count == True` para evitar doble conteo historico.,Alto,Corregir en v2 y documentar
+Columnas UCS muy incompletas por bajo match de nombres,Medio,"Conservar las variables de valor analitico, marcar ucs_match_found y usar No UCS match."
+Variantes de paises y organizaciones,Alto,"Aplicar tablas de equivalencia para paises, organizaciones y operadores."
+"Campos de masa, orbita y proposito no cubren todos los lanzamientos",Medio,"Usarlos para tendencias actuales y subconjuntos enriquecidos, no para conteos historicos globales."
+Solape entre GCAT y Space_Missions,Alto,Mantener preferred_for_launch_count y usar GCAT para conteos historicos.
