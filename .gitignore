@@ -13,8 +13,8 @@ npm-debug.log*
 /setup.sh
 /DESIGN_SYSTEM.md
 
-# Large generated HTML reports inside data-processing/
-data-processing/04_informes/**/*.html
+# Reports and analysis artifacts inside data-processing/
+data-processing/04_informes/
 
 # Python/local caches
 __pycache__/

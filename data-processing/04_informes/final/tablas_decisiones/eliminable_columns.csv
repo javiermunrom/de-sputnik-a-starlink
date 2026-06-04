@@ -1,3 +1,0 @@
-Columna,Utilidad analitica 0-10,Utilidad preguntas 0-10,Calidad datos 0-10,% nulos,Redundancia,Decision,Preguntas asociadas
-ucs_satellite_name,5,3,0.5,95.42,no,eliminar,apoyo/trazabilidad
-source_count,3,3,10.0,0.0,no,transformar/eliminar si no documenta trazabilidad,apoyo/trazabilidad
